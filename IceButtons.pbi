@@ -6,7 +6,7 @@
 ;    Source Name: IceButtons.pbi
 ;         Author: ChrisR
 ;           Date: 2023-10-06
-;        Version: 1.1
+;        Version: 1.2
 ;     PB-Version: 6.0 or other
 ;             OS: Windows Only
 ;         Credit: JellyButtons by Justin Jack (January  1, 2014)
@@ -64,6 +64,7 @@ Enumeration IceButtonTheme 1
   #IceBtn_Theme
   #IceBtn_Theme_DarkBlue
   #IceBtn_Theme_LightBlue
+  #IceBtn_MyTheme
 EndEnumeration
 
 Enumeration IceButtonTheme
@@ -125,6 +126,7 @@ Structure ICEBUTTON_INFO
   *OldWndProc
 EndStructure
 
+Declare ToolTipHandle() 
 Declare IBWindowPB(WindowID)
 Declare IBIsDarkColor(iColor)
 Declare IBDisabledDarkColor(iColor)
@@ -159,7 +161,6 @@ Macro IBProcedureReturnIf(Cond, ReturnVal = 0)
 EndMacro
 
 Macro IceButtonID(pIceButton, Gadget, ReturnValue = #False)
-  ; Push Pop List Position not really require here
   PushListPosition(IceButtons())
   Repeat
     ForEach IceButtons()
@@ -304,6 +305,8 @@ Procedure LoadIceButtonTheme(Theme)
       Restore DarkBlue
     Case #IceBtn_Theme_LightBlue
       Restore LightBlue
+    Case #IceBtn_MyTheme
+      Restore MyTheme
     Default
       Restore DarkBlue
   EndSelect
@@ -1268,7 +1271,19 @@ DataSection
   Data.i #IceBtn_ShadowColor, $FF802B
   Data.i #IceBtn_RoundX, 8
   Data.i #IceBtn_RoundY, 8
-  Data.i #IceBtn_END  
+  Data.i #IceBtn_END
+  
+  MyTheme:
+  Data.i #IceBtn_color, $FFA6A6
+  Data.i #IceBtn_BackColor, $F0F0F0
+  Data.i #IceBtn_DisableColor, $FFB0B0
+  Data.i #IceBtn_FrontColor, $000000
+  Data.i #IceBtn_DisableFrontColor, $464243
+  Data.i #IceBtn_EnableShadow, 0
+  Data.i #IceBtn_ShadowColor, #PB_Default
+  Data.i #IceBtn_RoundX, 8
+  Data.i #IceBtn_RoundY, 8
+  Data.i #IceBtn_END
 EndDataSection
 
 ;-

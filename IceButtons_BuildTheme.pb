@@ -5,7 +5,7 @@
 ;    Source Name: IceButtons_BuildTheme.pb
 ;         Author: ChrisR
 ;           Date: 2023-10-06
-;        Version: 1.0
+;        Version: 1.2
 ;     PB-Version: 6.0 or other
 ;             OS: Windows Only
 ;          Forum: https://www.purebasic.fr/english/viewtopic.php?t=82592
@@ -101,7 +101,9 @@ Procedure ClipboardText()
   Text$ + "Data.i #IceBtn_RoundX, "               + Str(Value) +#LF$
   
   Value = GetIceBtnThemeAttribute(#IceBtn_RoundY)
-  Text$ + "Data.i #IceBtn_RoundY, "               + Str(Value)
+  Text$ + "Data.i #IceBtn_RoundY, "               + Str(Value) +#LF$
+  
+  Text$ + "Data.i #IceBtn_END"
   
   SetClipboardText(Text$)
   Debug Text$
