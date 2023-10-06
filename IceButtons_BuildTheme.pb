@@ -172,7 +172,7 @@ Procedure SetBackColor(Color)
   SetWindowColor(#Window, Color)
   For I = #Txt_ButtonColor To #Txt_RounDY
     SetGadgetColor(I, #PB_Gadget_BackColor, Color)
-    If IsDarkColor(Color)
+    If IBIsDarkColor(Color)
       SetGadgetColor(I, #PB_Gadget_FrontColor, #White)
     Else
       SetGadgetColor(I, #PB_Gadget_FrontColor, #Black)
@@ -344,7 +344,7 @@ Repeat
   EndSelect
 ForEver
 ; IDE Options = PureBasic 6.01 LTS (Windows - x64)
-; CursorPosition = 260
-; FirstLine = 254
+; CursorPosition = 177
+; FirstLine = 169
 ; Folding = -
 ; EnableXP
