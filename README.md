@@ -1,14 +1,18 @@
 # IceButtons
 Ice Button Theme Library (for Dark or Light Theme Button)
 
-IceButtons Windows library will add a theme to your ButtonGadget, IceButton
+IceButtons Windows library will add a theme to your ButtonGadget, IceButton<br>
 They'll still work in the same way as PureBasic Button, they're ButtonGadgets
 
+![Alt text](/Demo_IceButtons.png?raw=true "Demo Ice Buttons")<br>
+
+![Alt text](/Build_IceButtons_Theme.png?raw=true "Build_IceButtons_Theme")<br>
+
 ## __How tu use:__ <br>
-- Add: XIncludeFile "IceButtons.pbi"
-- And apply one of the themes With the function: SetIceButtonTheme(#IceBtn_Theme_DarkBlue) or SetIceButtonTheme(#IceBtn_Theme_LightBlue)
-Easy, that's all :wink:
-Note that you can SetIceButtonTheme(Theme) anywhere you like in your source, before or after creating the window, gadget's and buttons
+- Add: XIncludeFile "IceButtons.pbi"<br>
+- And apply one of the themes With the function: SetIceButtonTheme(#IceBtn_Theme_DarkBlue) or SetIceButtonTheme(#IceBtn_Theme_LightBlue)<br>
+- Easy, that's all :wink:<br>
+- Note that you can SetIceButtonTheme(Theme) anywhere you like in your source, before or after creating the window, gadget's and buttons<br>
 
 ## __Theme attribute (defined in DataSection):__ <br>
 - #IceBtn_color, Color : Button color
@@ -35,3 +39,5 @@ Note that you can SetIceButtonTheme(Theme) anywhere you like in your source, bef
 . . . - Ex: GetIceButtonAttribute(#Gadget, #IceBtn_color)
 - SetIceButtonAttribute(Gadget, Attribut, Value) : Changes an IceButton attribute value
 . . . - Ex: SetIceButtonAttribute(#Gadget, #IceBtn_color, #Blue) to change the IceButton color in blue
+
+Enjoy :smile:
