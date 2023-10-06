@@ -210,7 +210,7 @@ Macro _ToolTipHandle()
   Tooltip = ToolTipHandle()
   If Tooltip
     SetWindowTheme_(Tooltip, @"", @"")
-    SendMessage_(Tooltip, #TTM_SETDELAYTIME,#TTDT_INITIAL, 0)
+    ;SendMessage_(Tooltip, #TTM_SETDELAYTIME, #TTDT_INITIAL, 250) : SendMessage_(Tooltip, #TTM_SETDELAYTIME,#TTDT_AUTOPOP, 5000) : SendMessage_(Tooltip, #TTM_SETDELAYTIME,#TTDT_RESHOW, 250)
     Protected TmpBackColor = GetIceBtnThemeAttribute(#IceBtn_BackColor)
     SendMessage_(Tooltip, #TTM_SETTIPBKCOLOR, TmpBackColor, 0)
     If IBIsDarkColor(TmpBackColor)
@@ -223,17 +223,16 @@ Macro _ToolTipHandle()
 EndMacro
 
 Procedure IBWindowPB(WindowID) ; Find pb-id over handle
-  Protected result, window
-  result = -1
+  Protected Result = -1, Window
   PB_Object_EnumerateStart(PB_Window_Objects)
-  While PB_Object_EnumerateNext(PB_Window_Objects, @window)
-    If WindowID = WindowID(window)
-      result = window
+  While PB_Object_EnumerateNext(PB_Window_Objects, @Window)
+    If WindowID = WindowID(Window)
+      Result = Window
       Break
     EndIf
   Wend
   PB_Object_EnumerateAbort(PB_Window_Objects)
-  ProcedureReturn result
+  ProcedureReturn Result
 EndProcedure
   
 Procedure IBIsDarkColor(iColor)
@@ -361,7 +360,7 @@ Procedure MakeIceButtonImages(cX, cY, *IceButton.ICEBUTTON_INFO)
       EndSelect
       
       If StartDrawing(ImageOutput(*ThisImage))
-        Box(0, 0, cX, cY, ButtonBackColor | $80000000)
+        Box(0, 0, cX, cY, ButtonBackColor)
         RoundBox(0, 0, cX, cY, RoundX, RoundY, ButtonColor | $80000000)
         DrawingMode(#PB_2DDrawing_Gradient | #PB_2DDrawing_AlphaBlend)
         
@@ -490,11 +489,6 @@ Procedure UpdateIceButtonImages(*IceButton.ICEBUTTON_INFO)
     \hDcPressed   = CreateCompatibleDC_(hGenDC)
     \hDcDisabled  = CreateCompatibleDC_(hGenDC)
     
-    ;;SetWindowLongPtr_(IceButtons()\IDGadget, #GWL_STYLE, GetWindowLongPtr_(IceButtons()\IDGadget, #GWL_STYLE) | #BS_OWNERDRAW)
-    ;SetWindowLongPtr_(IceButtons()\IDGadget, #GWL_STYLE, GetWindowLongPtr_(IceButtons()\IDGadget, #GWL_STYLE) | #BS_USERBUTTON | #BS_HATCHED)   ; #BS_OWNERDRAW Without #BS_DEFPUSHBUTTON
-    
-    ;SetWindowPos_(IceButtons()\IDGadget, #Null, 0, 0, 0, 0, #SWP_NOZORDER | #SWP_NOSIZE | #SWP_NOMOVE)
-    
     \hObjRegular  = SelectObject_(\hDcRegular, ImageID(\imgRegular))
     \hObjHiLite   = SelectObject_(\hDcHiLite, ImageID(\imgHilite))
     \hObjPressed  = SelectObject_(\hDcPressed, ImageID(\imgPressed))
@@ -509,7 +503,7 @@ Procedure UpdateIceButtonImages(*IceButton.ICEBUTTON_INFO)
 EndProcedure
 
 Procedure FreeIceButton(Gadget)
-  Protected savText.s, RetVal
+  Protected SavText.s, RetVal
   Protected *IceButtons.ICEBUTTON_INFO : IceButtonID(*IceButtons, Gadget, #False)
   
   SetWindowLongPtr_(IceButtons()\IDGadget, #GWLP_WNDPROC, IceButtons()\OldWndProc)
@@ -526,7 +520,7 @@ Procedure FreeIceButton(Gadget)
     If \imgDisabled And IsImage(\imgDisabled)  : FreeImage(\imgDisabled) : EndIf
   EndWith
   
-  savText = *IceButtons\BtnInfo\sButtonText
+  SavText = *IceButtons\BtnInfo\sButtonText
   ;SetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE, GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) ! #BS_OWNERDRAW)
   SetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE, GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) ! #BS_USERBUTTON ! #BS_HATCHED)   ; #BS_OWNERDRAW Without #BS_DEFPUSHBUTTON
   SetWindowPos_(*IceButtons\IDGadget, #Null, 0, 0, 0, 0, #SWP_NOZORDER | #SWP_NOSIZE | #SWP_NOMOVE)
@@ -535,7 +529,7 @@ Procedure FreeIceButton(Gadget)
   DeleteElement(IceButtons())
   
   If IsGadget(Gadget)
-    SetGadgetText(Gadget, savText)
+    SetGadgetText(Gadget, SavText)
     InvalidateRect_(GadgetID(Gadget), 0, 0)
   EndIf
   RetVal = #True
@@ -653,25 +647,28 @@ Procedure AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #F
       ProcedureReturn 0
     EndIf
     
-    hGenDC                = GetDC_(#Null)
+    hGenDC        = GetDC_(#Null)
     \hDcRegular   = CreateCompatibleDC_(hGenDC)
     \hDcHiLite    = CreateCompatibleDC_(hGenDC)
     \hDcPressed   = CreateCompatibleDC_(hGenDC)
     \hDcDisabled  = CreateCompatibleDC_(hGenDC)
-    
-    ;SetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE, GetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE) | #BS_OWNERDRAW)
-    SetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE, GetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE) | #BS_USERBUTTON | #BS_HATCHED)   ; #BS_OWNERDRAW Without #BS_DEFPUSHBUTTON
-    
-    SetWindowPos_(*IceButton\IDGadget, #Null, 0, 0, 0, 0, #SWP_NOZORDER | #SWP_NOSIZE | #SWP_NOMOVE)
-    
+  
     \hObjRegular  = SelectObject_(\hDcRegular, ImageID(\imgRegular))
     \hObjHiLite   = SelectObject_(\hDcHiLite, ImageID(\imgHilite))
     \hObjPressed  = SelectObject_(\hDcPressed, ImageID(\imgPressed))
     \hObjDisabled = SelectObject_(\hDcDisabled, ImageID(\imgDisabled))
     
-    SetWindowLongPtr_(*IceButton\IDGadget, #GWLP_WNDPROC, @IceButton_WndProc())
     ReleaseDC_(#Null, hGenDC)
     InvalidateRect_(IceButtons()\IDGadget, 0, 0)
+    
+    If Not UpdateIceButton
+      ;SetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE, GetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE) | #BS_OWNERDRAW)
+      SetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE, GetWindowLongPtr_(*IceButton\IDGadget, #GWL_STYLE) | #BS_USERBUTTON | #BS_HATCHED)   ; #BS_OWNERDRAW Without #BS_DEFPUSHBUTTON
+      
+      SetWindowPos_(*IceButton\IDGadget, #Null, 0, 0, 0, 0, #SWP_NOZORDER | #SWP_NOSIZE | #SWP_NOMOVE)
+      
+      SetWindowLongPtr_(*IceButton\IDGadget, #GWLP_WNDPROC, @IceButton_WndProc())
+    EndIf
     
     RetVal = #True
   EndWith
@@ -681,8 +678,7 @@ EndProcedure
 
 Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
   Protected *IceButtons.ICEBUTTON_INFO, OldWndProc, CursorPos.POINT, ps.PAINTSTRUCT, Rect.RECT
-  Protected cX, cY, Margin = 6, Xofset, Yofset, HFlag, VFlag, mText.s, mTextLen, In_Button_Rect, hDC_to_use
-  Protected TxtHeight, TransparentColor = $00000000
+  Protected cX, cY, Margin = 6, Xofset, Yofset, HFlag, VFlag, Text.s, TextLen, TxtHeight, In_Button_Rect, hDC_to_use
   
   ForEach IceButtons()
    If IceButtons()\IDGadget = hWnd
@@ -829,8 +825,8 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
       ; Calculate text height for multiline buttons, then adapt rectangle to center text vertically (DT_VCenter doesn't do the trick)
       ; It must be done before BitBlt() to be overwritten
       If (*IceButtons\BtnInfo\sButtonText <> "") And (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & #BS_MULTILINE = #BS_MULTILINE) 
-        mText  = *IceButtons\BtnInfo\sButtonText
-        mTextLen = Len(mText)
+        Text  = *IceButtons\BtnInfo\sButtonText
+        TextLen = Len(Text)
         SelectObject_(ps\hdc, *IceButtons\BtnInfo\iActiveFont)
         SetBkMode_(ps\hdc, #TRANSPARENT)
         SetTextColor_(ps\hdc, *IceButtons\BtnInfo\iFrontColor)
@@ -838,15 +834,15 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
         Rect\top        = Yofset + Margin
         Rect\right      = cX + Xofset - Margin
         Rect\bottom     = cY + Yofset - Margin
-        TxtHeight = DrawText_(ps\hdc, @mText, mTextLen, @Rect, #DT_CENTER | #DT_VCENTER | #DT_WORDBREAK)
+        TxtHeight = DrawText_(ps\hdc, @Text, TextLen, @Rect, #DT_CENTER | #DT_VCENTER | #DT_WORDBREAK)
       EndIf
                 
       SelectClipRgn_(ps\hdc, *IceButtons\BtnInfo\hRgn)
       BitBlt_(ps\hdc, 0, 0, cX, cY, hDC_to_use, 0, 0, #SRCCOPY)
       
       If *IceButtons\BtnInfo\sButtonText <> ""
-        mText  = *IceButtons\BtnInfo\sButtonText
-        mTextLen = Len(mText)
+        Text  = *IceButtons\BtnInfo\sButtonText
+        TextLen = Len(Text)
         If (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & (#BS_LEFT | #BS_RIGHT) = (#BS_LEFT | #BS_RIGHT)) : HFlag | #DT_CENTER
         ElseIf (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & #BS_LEFT = #BS_LEFT)                         : HFlag | #DT_LEFT
         ElseIf (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & #BS_RIGHT = #BS_RIGHT)                       : HFlag | #DT_RIGHT
@@ -880,7 +876,7 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
               Rect\top + (Rect\bottom - TxtHeight) - Margin
             EndIf
           EndIf          
-          TxtHeight = DrawText_(ps\hdc, @mText, mTextLen, @Rect, HFlag | VFlag)   ; | #DT_SINGLELINE)
+          TxtHeight = DrawText_(ps\hdc, @Text, TextLen, @Rect, HFlag | VFlag)
         EndIf
         
         If *IceButtons\BtnInfo\bButtonEnable
@@ -900,7 +896,7 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
             Rect\top + (Rect\bottom - TxtHeight) - Margin
           EndIf
         EndIf
-        TxtHeight = DrawText_(ps\hdc, @mText, mTextLen, @Rect, HFlag | VFlag)   ; | #DT_SINGLELINE)
+        TxtHeight = DrawText_(ps\hdc, @Text, TextLen, @Rect, HFlag | VFlag)
 
       EndIf
       EndPaint_(hWnd, @ps)
@@ -921,24 +917,24 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
       ; Calculate text height for multiline buttons, then adapt rectangle to center text vertically (DT_VCenter doesn't do the trick)
       ; It must be done before BitBlt() to be overwritten
       If (*IceButtons\BtnInfo\sButtonText <> "") And (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & #BS_MULTILINE = #BS_MULTILINE) 
-        mText  = *IceButtons\BtnInfo\sButtonText
-        mTextLen = Len(mText)
-        SelectObject_(ps\hdc, *IceButtons\BtnInfo\iActiveFont)
-        SetBkMode_(ps\hdc, #TRANSPARENT)
-        SetTextColor_(ps\hdc, *IceButtons\BtnInfo\iFrontColor)
+        Text  = *IceButtons\BtnInfo\sButtonText
+        TextLen = Len(Text)
+        SelectObject_(wParam, *IceButtons\BtnInfo\iActiveFont)
+        SetBkMode_(wParam, #TRANSPARENT)
+        SetTextColor_(wParam, *IceButtons\BtnInfo\iFrontColor)
         Rect\left       = Xofset + Margin
         Rect\top        = Yofset + Margin
         Rect\right      = cX + Xofset - Margin
         Rect\bottom     = cY + Yofset - Margin
-        TxtHeight = DrawText_(ps\hdc, @mText, mTextLen, @Rect, #DT_CENTER | #DT_VCENTER | #DT_WORDBREAK)
+        TxtHeight = DrawText_(wParam, @Text, TextLen, @Rect, #DT_CENTER | #DT_VCENTER | #DT_WORDBREAK)
       EndIf
       
       SelectClipRgn_(wParam, *IceButtons\BtnInfo\hRgn)
       BitBlt_(wParam, 0, 0, cX, cY, hDC_to_use, 0, 0, #SRCCOPY)
       
       If *IceButtons\BtnInfo\sButtonText <> ""
-        mText           = *IceButtons\BtnInfo\sButtonText
-        mTextLen        = Len(mText)
+        Text           = *IceButtons\BtnInfo\sButtonText
+        TextLen        = Len(Text)
         If (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & (#BS_LEFT | #BS_RIGHT) = (#BS_LEFT | #BS_RIGHT)) : HFlag | #DT_CENTER
         ElseIf (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & #BS_LEFT = #BS_LEFT)                         : HFlag | #DT_LEFT
         ElseIf (GetWindowLongPtr_(*IceButtons\IDGadget, #GWL_STYLE) & #BS_RIGHT = #BS_RIGHT)                       : HFlag | #DT_RIGHT
@@ -972,13 +968,13 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
               Rect\top + (Rect\bottom - TxtHeight) - Margin
             EndIf
           EndIf
-          DrawText_(wParam, @mText, mTextLen, @Rect, HFlag | VFlag)
+          DrawText_(wParam, @Text, TextLen, @Rect, HFlag | VFlag)
         EndIf
         
         If *IceButtons\BtnInfo\bButtonEnable
-          SetTextColor_(ps\hdc, *IceButtons\BtnInfo\iFrontColor)
+          SetTextColor_(wParam, *IceButtons\BtnInfo\iFrontColor)
         Else
-          SetTextColor_(ps\hdc, *IceButtons\BtnInfo\iDisableFrontColor)
+          SetTextColor_(wParam, *IceButtons\BtnInfo\iDisableFrontColor)
         EndIf
         Rect\left       = Xofset + Margin
         Rect\top        = Yofset + Margin
@@ -992,7 +988,7 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
             Rect\top + (Rect\bottom - TxtHeight) - Margin
           EndIf
         EndIf
-        DrawText_(wParam, @mText, mTextLen, @Rect, HFlag | VFlag)
+        DrawText_(wParam, @Text, TextLen, @Rect, HFlag | VFlag)
       EndIf
       ProcedureReturn #True
       
@@ -1268,8 +1264,8 @@ DataSection
   Data.i #IceBtn_DisableColor, #PB_Default
   Data.i #IceBtn_FrontColor, #Black
   Data.i #IceBtn_DisableFrontColor, #PB_Default
-  Data.i #IceBtn_EnableShadow, 0
-  Data.i #IceBtn_ShadowColor, $FFD7C9
+  Data.i #IceBtn_EnableShadow, 1
+  Data.i #IceBtn_ShadowColor, $FF802B
   Data.i #IceBtn_RoundX, 8
   Data.i #IceBtn_RoundY, 8
   Data.i #IceBtn_END  
@@ -1386,8 +1382,6 @@ CompilerIf (#PB_Compiler_IsMainFile)
 
   EndIf
 CompilerEndIf
+
 ; IDE Options = PureBasic 6.01 LTS (Windows - x64)
-; CursorPosition = 1308
-; FirstLine = 1283
-; Folding = ------
 ; EnableXP

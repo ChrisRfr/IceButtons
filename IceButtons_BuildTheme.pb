@@ -244,14 +244,14 @@ Procedure Open_Window(X = 0, Y = 0, Width = 540, Height = 340)
     TextGadget(#Txt_RounDX, 40, 230, 120, 22, "RounDX:")
     SetGadgetColor(#Txt_RounDX, #PB_Gadget_FrontColor, RGB(255, 255, 255))
     SetGadgetColor(#Txt_RounDX, #PB_Gadget_BackColor, RGB(33, 37, 41))
-    SpinGadget(#Spin_RoundX, 165, 229, 50, 24, 0, 999, #PB_Spin_Numeric)
+    SpinGadget(#Spin_RoundX, 165, 229, 55, 24, 0, 999, #PB_Spin_Numeric)
     SetWindowLongPtr_(GadgetID(#Spin_RoundX), #GWL_STYLE, GetWindowLongPtr_(GadgetID(#Spin_RoundX), #GWL_STYLE) | #ES_NUMBER)
     SetGadgetState(#Spin_RoundX, GetIceBtnThemeAttribute(#IceBtn_RoundX))
     
     TextGadget(#Txt_RounDY, 40, 260, 120, 22, "RounDY:")
     SetGadgetColor(#Txt_RounDY, #PB_Gadget_FrontColor, RGB(255, 255, 255))
     SetGadgetColor(#Txt_RounDY, #PB_Gadget_BackColor, RGB(33, 37, 41))
-    SpinGadget(#Spin_RoundY, 165, 259, 50, 24, 0, 999, #PB_Spin_Numeric)
+    SpinGadget(#Spin_RoundY, 165, 259, 55, 24, 0, 999, #PB_Spin_Numeric)
     SetWindowLongPtr_(GadgetID(#Spin_RoundY), #GWL_STYLE, GetWindowLongPtr_(GadgetID(#Spin_RoundY), #GWL_STYLE) | #ES_NUMBER)
     SetGadgetState(#Spin_RoundY, GetIceBtnThemeAttribute(#IceBtn_RoundY))
     
@@ -343,8 +343,6 @@ Repeat
       EndSelect
   EndSelect
 ForEver
+
 ; IDE Options = PureBasic 6.01 LTS (Windows - x64)
-; CursorPosition = 177
-; FirstLine = 169
-; Folding = -
 ; EnableXP
