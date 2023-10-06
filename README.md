@@ -35,7 +35,7 @@ They'll still work in the same way as PureBasic Button, they're ButtonGadgets
 &emsp;Size from 1 To Y. For RoundBox(), the radius of the rounded corners in the Y direction
 
 ## __Public Functions:__ <br>
-- SetIceButtonTheme(Theme)<br/>
+- SetIceButtonTheme(#Theme)<br/>
 &emsp;Apply, Change Theme<br>
 &emsp; - Ex: SetIceButtonTheme(#IceBtn_Theme_DarkBlue) or SetIceButtonTheme(#IceBtn_Theme_LightBlue) or custom future Theme<br>
 - GetIceButtonTheme()<br/>
@@ -44,16 +44,16 @@ They'll still work in the same way as PureBasic Button, they're ButtonGadgets
 &emsp;Is it an IceButton?<br>
 - FreeIceButtonTheme()<br/>
 &emsp;Free the theme, IceButton and associated resources and return to the standard ButtonGadget<br>
-- SetIceBtnThemeAttribute(Attribut, Value)<br/>
+- SetIceBtnThemeAttribute(#Attribut, Value)<br/>
 &emsp;Changes a theme attribute value<br>
 &emsp; - Ex: SetIceBtnThemeAttribute(#IceBtn_color, #Blue) to change the theme Button color attribute in blue<br>
-- GetIceBtnThemeAttribute(Attribut)<br/>
+- GetIceBtnThemeAttribute(#Attribut)<br/>
 &emsp;Returns a theme Attribute value<br>
 &emsp; - Ex: GetIceBtnThemeAttribute(#IceBtn_color)<br>
-- SetIceButtonAttribute(#Gadget, Attribut, Value)<br/>
+- SetIceButtonAttribute(#Gadget, #Attribut, Value)<br/>
 &emsp;Changes an IceButton attribute value<br>
 &emsp; - Ex: SetIceButtonAttribute(#Gadget, #IceBtn_color, #Blue) to change the IceButton color in blue<br>
-- GetIceButtonAttribute(#Gadget, Attribut)<br/>
+- GetIceButtonAttribute(#Gadget, #Attribut)<br/>
 &emsp;Returns an IceButton attribute value<br>
 &emsp; - Ex: GetIceButtonAttribute(#Gadget, #IceBtn_color)<br>
 
