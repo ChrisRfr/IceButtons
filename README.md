@@ -26,18 +26,18 @@ They'll still work in the same way as PureBasic Button, they're ButtonGadgets
 - #IceBtn_RoundY, Size : from 1 To Y. For RoundBox(), the radius of the rounded corners in the Y direction
 
 ## __Public Functions:__ <br>
-- SetIceButtonTheme(Theme) : Apply, Change Theme
-. . . - Ex: SetIceButtonTheme(#IceBtn_Theme_DarkBlue) or SetIceButtonTheme(#IceBtn_Theme_LightBlue) or custom future Theme
-- GetIceButtonTheme() : Get the current theme
-- IsIceButton(Gadget) : Is it an IceButton?
-- FreeIceButtonTheme() : Free the theme, IceButton and associated resources and return to the standard ButtonGadget
-- GetIceBtnThemeAttribute(Attribut) : Returns a theme Attribute value
-. . . - Ex: GetIceBtnThemeAttribute(#IceBtn_color)
-- SetIceBtnThemeAttribute(Attribut, Value) : Changes a theme attribute value
-. . . - Ex: SetIceBtnThemeAttribute(#IceBtn_color, #Blue) to change the theme Button color attribute in blue
-- GetIceButtonAttribute(Gadget, Attribut) : Returns an IceButton attribute value
-. . . - Ex: GetIceButtonAttribute(#Gadget, #IceBtn_color)
-- SetIceButtonAttribute(Gadget, Attribut, Value) : Changes an IceButton attribute value
-. . . - Ex: SetIceButtonAttribute(#Gadget, #IceBtn_color, #Blue) to change the IceButton color in blue
+- SetIceButtonTheme(Theme) : Apply, Change Theme<br>
+.  - Ex: SetIceButtonTheme(#IceBtn_Theme_DarkBlue) or SetIceButtonTheme(#IceBtn_Theme_LightBlue) or custom future Theme<br>
+- GetIceButtonTheme() : Get the current theme<br>
+- IsIceButton(Gadget) : Is it an IceButton?<br>
+- FreeIceButtonTheme() : Free the theme, IceButton and associated resources and return to the standard ButtonGadget<br>
+- GetIceBtnThemeAttribute(Attribut) : Returns a theme Attribute value<br>
+.  - Ex: GetIceBtnThemeAttribute(#IceBtn_color)<br>
+- SetIceBtnThemeAttribute(Attribut, Value) : Changes a theme attribute value<br>
+.  - Ex: SetIceBtnThemeAttribute(#IceBtn_color, #Blue) to change the theme Button color attribute in blue<br>
+- GetIceButtonAttribute(Gadget, Attribut) : Returns an IceButton attribute value<br>
+.  - Ex: GetIceButtonAttribute(#Gadget, #IceBtn_color)<br>
+- SetIceButtonAttribute(Gadget, Attribut, Value) : Changes an IceButton attribute value<br>
+.  - Ex: SetIceButtonAttribute(#Gadget, #IceBtn_color, #Blue) to change the IceButton color in blue<br>
 
 Enjoy :smile:
