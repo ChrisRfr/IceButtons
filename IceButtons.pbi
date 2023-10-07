@@ -36,25 +36,25 @@
 ;  -------------------------------------------------------------------------------------------------------------------------------------------------
 ;  |             Public Functions                     |      Description
 ;  |--------------------------------------------------|--------------------------------------------------------------------------------------------- 
-;  | SetIceButtonTheme(#Theme)                         | Apply, Change theme
+;  | SetIceButtonTheme(#Theme)                        | Apply, Change theme
 ;  |     Ex: SetIceButtonTheme(#IceBtn_Theme_DarkBlue) or SetIceButtonTheme(#IceBtn_Theme_LightBlue) or custom future Theme
 ;  |                                                  |
 ;  | GetIceButtonTheme()                              | Get the current theme
 ;  |                                                  |
-;  | IsIceButton(#Gadget)                              | Is it an IceButton?
+;  | IsIceButton(#Gadget)                             | Is it an IceButton?
 ;  |                                                  |
 ;  | FreeIceButtonTheme()                             | Free the theme, IceButton and associated resources and return to the standard ButtonGadget
 ;  |                                                  |
-;  | SetIceBtnThemeAttribute(#Attribut, Value)         | Changes a theme attribute value
+;  | SetIceBtnThemeAttribute(#Attribut, Value)        | Changes a theme attribute value
 ;  |   - Ex: SetIceBtnThemeAttribute(#IceBtn_color, #Blue) to change the theme Button color attribute in blue
 ;  |                                                  |
-;  | GetIceBtnThemeAttribute(#Attribut)                | Returns a theme Attribute value
+;  | GetIceBtnThemeAttribute(#Attribut)               | Returns a theme Attribute value
 ;  |   - Ex: GetIceBtnThemeAttribute(#IceBtn_color)
 ;  |                                                  |
-;  | SetIceButtonAttribute(#Gadget, #Attribut, Value)   | Changes an IceButton attribute value
+;  | SetIceButtonAttribute(#Gadget, #Attribut, Value) | Changes an IceButton attribute value
 ;  |   - Ex: SetIceButtonAttribute(#Gadget, #IceBtn_color, #Blue) to change the IceButton color in blue
 ;  |                                                  |
-;  | GetIceButtonAttribute(#Gadget, #Attribut)          | Returns an IceButton attribute value
+;  | GetIceButtonAttribute(#Gadget, #Attribut)        | Returns an IceButton attribute value
 ;  |   - Ex: GetIceButtonAttribute(#Gadget, #IceBtn_color)
 ;  -------------------------------------------------------------------------------------------------------------------------------------------------
 
