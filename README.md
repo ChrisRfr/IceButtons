@@ -29,6 +29,8 @@ They'll still work in the same way as PureBasic Button, they're ButtonGadgets
 &emsp;Disable or Enable text shadow
 - #IceBtn_ShadowColor, Color or #PB_Default<br/>
 &emsp;Button text shadow color, #PB_Default = White or Black depending on whether the button text color is dark or light
+- #IceBtn_BorderColor, Color or #PB_Default<br/>
+&emsp;Button border color, #PB_Default for the Button color<br/>
 - #IceBtn_RoundX, Size<br/>
 &emsp;Sizefrom 1 To X. For RoundBox(), the radius of the rounded corners in the X direction
 - #IceBtn_RoundY, Size<br/>
