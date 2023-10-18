@@ -1,7 +1,7 @@
 ﻿;- Top
 ; -----------------------------------------------------------------------------
 ;          Title: Ice Button Build Theme
-;    Description: Build your Ice Button Theme and copy it th clipboard
+;    Description: Build your Ice Button Theme and copy it to clipboard
 ;    Source Name: IceButtons_BuildTheme.pb
 ;         Author: ChrisR
 ;           Date: 2023-10-06
@@ -27,6 +27,7 @@ Enumeration Gadgets
   #Canv_DisableFrontColor  = #IceBtn_DisableFrontColor
   #Check_EnableShadow      = #IceBtn_EnableShadow
   #Canv_ShadowColor        = #IceBtn_ShadowColor
+  #Canv_BorderColor        = #IceBtn_BorderColor
   #Spin_RoundX             = #IceBtn_RoundX
   #Spin_RoundY             = #IceBtn_RoundY
   #Txt_ButtonColor
@@ -36,6 +37,7 @@ Enumeration Gadgets
   #Txt_DisableFrontColor
   #Txt_EnableShadow
   #Txt_ShadowColor
+  #Txt_BorderColor
   #Txt_RounDX
   #Txt_RounDY
   #Img_EnableShadow
@@ -51,7 +53,7 @@ Declare ClipboardText()
 Declare Resize_Window()
 Declare SetBackColor(Color)
 Declare DrawCanvasColor(Canvas, Color = #PB_Default)
-Declare Open_Window(X = 0, Y = 0, Width = 540, Height = 340)
+Declare Open_Window(X = 0, Y = 0, Width = 540, Height = 370)
 
 Procedure ClipboardText()
   Protected Value, Text$ = "MyTheme:" +#LF$
@@ -95,6 +97,13 @@ Procedure ClipboardText()
     Text$ + "Data.i #IceBtn_ShadowColor, #PB_Default" +#LF$
   Else
     Text$ + "Data.i #IceBtn_ShadowColor, $"       + RSet(Hex(Blue(Value)), 2, "0") + RSet(Hex(Green(Value)), 2, "0") + RSet(Hex(Red(Value)), 2, "0") +#LF$
+  EndIf
+  
+  Value = GetIceBtnThemeAttribute(#IceBtn_BorderColor)
+  If Value = #PB_Default
+    Text$ + "Data.i #IceBtn_BorderColor, #PB_Default" +#LF$
+  Else
+    Text$ + "Data.i #IceBtn_BorderColor, $"         + RSet(Hex(Blue(Value)), 2, "0") + RSet(Hex(Green(Value)), 2, "0") + RSet(Hex(Red(Value)), 2, "0") +#LF$
   EndIf
   
   Value = GetIceBtnThemeAttribute(#IceBtn_RoundX)
@@ -154,14 +163,18 @@ Procedure Resize_Window()
   ResizeGadget(#Canv_ShadowColor, ScaleX * 165, ScaleY * 200, ScaleX * 22, ScaleY * 22)
   DrawCanvasColor(#Canv_ShadowColor, GetIceBtnThemeAttribute(#IceBtn_ShadowColor))
   
-  ResizeGadget(#Txt_RounDX, ScaleX * 40, ScaleY * 230, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Spin_RoundX, ScaleX * 165, ScaleY * 229, ScaleX * 50, ScaleY * 24)
+  ResizeGadget(#Txt_BorderColor, ScaleX * 40, ScaleY * 230, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_BorderColor, ScaleX * 165, ScaleY * 230, ScaleX * 22, ScaleY * 22)
+  DrawCanvasColor(#Canv_BorderColor, GetIceBtnThemeAttribute(#IceBtn_BorderColor))
   
-  ResizeGadget(#Txt_RounDY, ScaleX * 40, ScaleY * 260, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Spin_RoundY, ScaleX * 165, ScaleY * 259, ScaleX * 50, ScaleY * 24)
+  ResizeGadget(#Txt_RounDX, ScaleX * 40, ScaleY * 260, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Spin_RoundX, ScaleX * 165, ScaleY * 259, ScaleX * 50, ScaleY * 24)
   
-  ResizeGadget(#Btn_DarkBlue, ScaleX * 40, ScaleY * 300, ScaleX * 80, ScaleY * 24)
-  ResizeGadget(#Btn_LightBlue, ScaleX * 135, ScaleY * 300, ScaleX * 80, ScaleY * 24)
+  ResizeGadget(#Txt_RounDY, ScaleX * 40, ScaleY * 290, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Spin_RoundY, ScaleX * 165, ScaleY * 289, ScaleX * 50, ScaleY * 24)
+  
+  ResizeGadget(#Btn_DarkBlue, ScaleX * 40, ScaleY * 330, ScaleX * 80, ScaleY * 24)
+  ResizeGadget(#Btn_LightBlue, ScaleX * 135, ScaleY * 330, ScaleX * 80, ScaleY * 24)
   
   ResizeGadget(#Btn_Clipboard, ScaleX * 260, ScaleY * 20, ScaleX * 240, ScaleY * 60)
   ResizeGadget(#Btn_Regular, ScaleX * 260, ScaleY * 100, ScaleX * 240, ScaleY * 60)
@@ -172,14 +185,17 @@ EndProcedure
 Procedure SetBackColor(Color)
   Protected I
   SetWindowColor(#Window, Color)
-  For I = #Txt_ButtonColor To #Txt_RounDY
-    SetGadgetColor(I, #PB_Gadget_BackColor, Color)
-    If IBIsDarkColor(Color)
+  If IBIsDarkColor(Color)
+    For I = #Txt_ButtonColor To #Txt_RounDY
+      SetGadgetColor(I, #PB_Gadget_BackColor, Color)
       SetGadgetColor(I, #PB_Gadget_FrontColor, #White)
-    Else
+    Next
+  Else
+    For I = #Txt_ButtonColor To #Txt_RounDY
+      SetGadgetColor(I, #PB_Gadget_BackColor, Color)
       SetGadgetColor(I, #PB_Gadget_FrontColor, #Black)
-    EndIf
-  Next
+    Next
+  EndIf
 EndProcedure
 
 Procedure DrawCanvasColor(Canvas, Color = #PB_Default)
@@ -197,72 +213,58 @@ Procedure DrawCanvasColor(Canvas, Color = #PB_Default)
   EndIf
 EndProcedure
       
-Procedure Open_Window(X = 0, Y = 0, Width = 540, Height = 340)
+Procedure Open_Window(X = 0, Y = 0, Width = 540, Height = 370)
   If OpenWindow(#Window, X, Y, Width, Height, "Build Ice Buttons Theme", #PB_Window_SystemMenu | #PB_Window_MinimizeGadget | #PB_Window_MaximizeGadget | #PB_Window_SizeGadget | #PB_Window_ScreenCentered)
     
-    TextGadget(#Txt_ButtonColor, 40, 20, 120, 22, "Button color:")
-    SetGadgetColor(#Txt_ButtonColor, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_ButtonColor, #PB_Gadget_BackColor, RGB(33, 37, 41))
+    TextGadget(#Txt_ButtonColor, 40, 20, 120, 22, "Button Color:")
     CanvasGadget(#Canv_ButtonColor, 165, 20, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_ButtonColor, GetIceBtnThemeAttribute(#IceBtn_color))
   
-    TextGadget(#Txt_BackgroundColor, 40, 50, 120, 22, "Background color:")
-    SetGadgetColor(#Txt_BackgroundColor, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_BackgroundColor, #PB_Gadget_BackColor, RGB(33, 37, 41))
+    TextGadget(#Txt_BackgroundColor, 40, 50, 120, 22, "Background Color:")
     CanvasGadget(#Canv_BackgroundColor, 165, 50, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_BackgroundColor, GetIceBtnThemeAttribute(#IceBtn_BackColor))
     
-    TextGadget(#Txt_Disablecolor, 40, 80, 120, 22, "Disable color:")
-    SetGadgetColor(#Txt_Disablecolor, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_Disablecolor, #PB_Gadget_BackColor, RGB(33, 37, 41))
+    TextGadget(#Txt_Disablecolor, 40, 80, 120, 22, "Disable Color:")
     CanvasGadget(#Canv_DisableColor, 165, 80, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_DisableColor, GetIceBtnThemeAttribute(#IceBtn_DisableColor))
     
-    TextGadget(#Txt_FrontColor, 40, 110, 120, 22, "Text color:")
-    SetGadgetColor(#Txt_FrontColor, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_FrontColor, #PB_Gadget_BackColor, RGB(33, 37, 41))
+    TextGadget(#Txt_FrontColor, 40, 110, 120, 22, "Text Color:")
     CanvasGadget(#Canv_FrontColor, 165, 110, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_FrontColor, GetIceBtnThemeAttribute(#IceBtn_FrontColor))
     
-    TextGadget(#Txt_DisableFrontColor, 40, 140, 120, 22, "Disable text color:")
-    SetGadgetColor(#Txt_DisableFrontColor, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_DisableFrontColor, #PB_Gadget_BackColor, RGB(33, 37, 41))
+    TextGadget(#Txt_DisableFrontColor, 40, 140, 120, 22, "Disable Text Color:")
     CanvasGadget(#Canv_DisableFrontColor, 165, 140, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_DisableFrontColor, GetIceBtnThemeAttribute(#IceBtn_DisableFrontColor))
     
     TextGadget(#Txt_EnableShadow, 40, 170, 120, 22, "Enable Shadow:")
-    SetGadgetColor(#Txt_EnableShadow, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_EnableShadow, #PB_Gadget_BackColor, RGB(33, 37, 41))
     ImageGadget(#Img_EnableShadow, 165, 170, 5, 22, 0)
     CheckBoxGadget(#Check_EnableShadow, 169, 170, 18, 22, "")
     SetGadgetState(#Check_EnableShadow, GetIceBtnThemeAttribute(#IceBtn_EnableShadow))
     
-    TextGadget(#Txt_ShadowColor, 40, 200, 120, 22, "Shadow color:")
-    SetGadgetColor(#Txt_ShadowColor, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_ShadowColor, #PB_Gadget_BackColor, RGB(33, 37, 41))
+    TextGadget(#Txt_ShadowColor, 40, 200, 120, 22, "Shadow Color:")
     CanvasGadget(#Canv_ShadowColor, 165, 200, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_ShadowColor, GetIceBtnThemeAttribute(#IceBtn_ShadowColor))
     
-    TextGadget(#Txt_RounDX, 40, 230, 120, 22, "RounDX:")
-    SetGadgetColor(#Txt_RounDX, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_RounDX, #PB_Gadget_BackColor, RGB(33, 37, 41))
-    SpinGadget(#Spin_RoundX, 165, 229, 55, 24, 0, 999, #PB_Spin_Numeric)
+    TextGadget(#Txt_BorderColor, 40, 230, 120, 22, "Border Color:")
+    CanvasGadget(#Canv_BorderColor, 165, 230, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    DrawCanvasColor(#Canv_BorderColor, GetIceBtnThemeAttribute(#IceBtn_BorderColor))
+    
+    TextGadget(#Txt_RounDX, 40, 260, 120, 22, "RounDX:")
+    SpinGadget(#Spin_RoundX, 165, 259, 55, 24, 0, 999, #PB_Spin_Numeric)
     SetWindowLongPtr_(GadgetID(#Spin_RoundX), #GWL_STYLE, GetWindowLongPtr_(GadgetID(#Spin_RoundX), #GWL_STYLE) | #ES_NUMBER)
     SetGadgetState(#Spin_RoundX, GetIceBtnThemeAttribute(#IceBtn_RoundX))
     
-    TextGadget(#Txt_RounDY, 40, 260, 120, 22, "RounDY:")
-    SetGadgetColor(#Txt_RounDY, #PB_Gadget_FrontColor, RGB(255, 255, 255))
-    SetGadgetColor(#Txt_RounDY, #PB_Gadget_BackColor, RGB(33, 37, 41))
-    SpinGadget(#Spin_RoundY, 165, 259, 55, 24, 0, 999, #PB_Spin_Numeric)
+    TextGadget(#Txt_RounDY, 40, 290, 120, 22, "RounDY:")
+    SpinGadget(#Spin_RoundY, 165, 289, 55, 24, 0, 999, #PB_Spin_Numeric)
     SetWindowLongPtr_(GadgetID(#Spin_RoundY), #GWL_STYLE, GetWindowLongPtr_(GadgetID(#Spin_RoundY), #GWL_STYLE) | #ES_NUMBER)
     SetGadgetState(#Spin_RoundY, GetIceBtnThemeAttribute(#IceBtn_RoundY))
     
-    ButtonGadget(#Btn_DarkBlue, 40, 300, 80, 24, "DarkBlue")
+    ButtonGadget(#Btn_DarkBlue, 40, 330, 80, 24, "DarkBlue")
     GadgetToolTip(#Btn_DarkBlue, "Apply DarkBlue Theme")
-    ButtonGadget(#Btn_LightBlue, 135, 300, 80, 24, "LightBlue")
+    ButtonGadget(#Btn_LightBlue, 135, 330, 80, 24, "LightBlue")
     GadgetToolTip(#Btn_LightBlue, "Apply LightBlue Theme")
     
-    ButtonGadget(#Btn_Clipboard, 260, 20, 240, 60, "Copy Theme to clipboard")
+    ButtonGadget(#Btn_Clipboard, 260, 20, 240, 60, "Copy Theme to Clipboard")
     ButtonGadget(#Btn_Regular, 260, 100, 240, 60, "MultiLine IceButton Gadget (#PB_Button_MultiLine)", #PB_Button_MultiLine)
     ButtonGadget(#Btn_Toggle, 260, 180, 240, 60, "Toggle Button (ON)", #PB_Button_Toggle)
     SetGadgetState(#Btn_Toggle, #True)
@@ -272,7 +274,7 @@ Procedure Open_Window(X = 0, Y = 0, Width = 540, Height = 340)
     BindEvent(#PB_Event_SizeWindow, @Resize_Window(), #Window)
     PostEvent(#PB_Event_SizeWindow, #Window, 0)
     
-    WindowBounds(#Window, 450, 240, #PB_Ignore, #PB_Ignore)
+    WindowBounds(#Window, 480, 240, #PB_Ignore, #PB_Ignore)
   EndIf
 EndProcedure
 
@@ -302,18 +304,18 @@ Repeat
             SetGadgetText(#Btn_Toggle, "Toggle Button (OFF)")
           EndIf
           
-        Case #Canv_ButtonColor, #Canv_BackgroundColor, #Canv_DisableColor, #Canv_FrontColor, #Canv_DisableFrontColor, #Canv_ShadowColor
+        Case #Canv_ButtonColor, #Canv_BackgroundColor, #Canv_DisableColor, #Canv_FrontColor, #Canv_DisableFrontColor, #Canv_ShadowColor, #Canv_BorderColor
           If EventType() = #PB_EventType_LeftClick
             ; Attribute = EventGadget() (ex:  #Canv_ButtonColor = #IceBtn_Color)
             Color = ColorRequester(GetIceBtnThemeAttribute(EventGadget()))
             If EventGadget() = #Canv_ButtonColor And Color = #PB_Default
               Color = GetSysColor_(#COLOR_3DFACE)
             EndIf
-            SetIceBtnThemeAttribute(EventGadget(), Color)
-            DrawCanvasColor(EventGadget(), Color)
             If EventGadget() = #Canv_BackgroundColor
               SetBackColor(Color)
             EndIf
+            SetIceBtnThemeAttribute(EventGadget(), Color)
+            DrawCanvasColor(EventGadget(), Color)
           EndIf
 
         Case #Check_EnableShadow
@@ -346,5 +348,5 @@ Repeat
   EndSelect
 ForEver
 
-; IDE Options = PureBasic 6.01 LTS (Windows - x64)
+; IDE Options = PureBasic 6.03 LTS (Windows - x64)
 ; EnableXP
