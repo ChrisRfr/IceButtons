@@ -140,10 +140,10 @@ Declare IBDisabledLightColor(iColor)
 
 Declare _ButtonGadget(Gadget, X, Y, Width, Height, Text$, Flags)
 Declare LoadIceButtonTheme(Theme)
-Declare MakeIceButtonImages(cX, cY, *IceButton.ICEBUTTON_INFO)
-Declare MakeIceImagesButton(cX, cY, *IceButton.ICEBUTTON_INFO)
+Declare MakeIceButton(cX, cY, *IceButton.ICEBUTTON_INFO)
+Declare MakeIceButtonImage(cX, cY, *IceButton.ICEBUTTON_INFO)
 Declare ChangeIceButton(Gadget)
-Declare UpdateIceButtonImages(*IceButton.ICEBUTTON_INFO)
+Declare UpdateIceButton(*IceButton.ICEBUTTON_INFO)
 Declare FreeIceButton(Gadget)
 Declare AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #False)
 Declare IceButton_WndProc(hWnd, uMsg, wParam, lParam)
@@ -426,7 +426,7 @@ Procedure LoadIceButtonTheme(Theme)
   Next
 EndProcedure
 
-Procedure MakeIceButtonImages(cX, cY, *IceButton.ICEBUTTON_INFO)
+Procedure MakeIceButton(cX, cY, *IceButton.ICEBUTTON_INFO)
   Protected *ThisImage, I
   
   With *IceButton\BtnInfo
@@ -513,7 +513,7 @@ Procedure MakeIceButtonImages(cX, cY, *IceButton.ICEBUTTON_INFO)
   
 EndProcedure
 
-Procedure MakeIceImagesButton(cX, cY, *IceButton.ICEBUTTON_INFO)
+Procedure MakeIceButtonImage(cX, cY, *IceButton.ICEBUTTON_INFO)
   Protected *ThisImage, I
   
   With *IceButton\BtnInfo
@@ -627,12 +627,12 @@ Procedure ChangeIceButton(Gadget)
   Protected RetVal
   Protected *IceButton.ICEBUTTON_INFO : IceButtonID(*IceButton, Gadget, #False)
 
-  ; DesktopScaledX(Y) is done in MakeIceButtonImages
+  ; DesktopScaledX(Y) is done in MakeIceButton
   Select *IceButton\PBGadgetType
     Case #PB_GadgetType_Button
-      MakeIceButtonImages(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
+      MakeIceButton(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
     Case #PB_GadgetType_ButtonImage
-      MakeIceImagesButton(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
+      MakeIceButtonImage(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
   EndSelect
   
       With *IceButton\BtnInfo
@@ -648,7 +648,7 @@ Procedure ChangeIceButton(Gadget)
   ProcedureReturn RetVal
 EndProcedure
 
-Procedure UpdateIceButtonImages(*IceButton.ICEBUTTON_INFO)
+Procedure UpdateIceButton(*IceButton.ICEBUTTON_INFO)
   Protected hGenDC, CancelOut, RetVal
   
   With *IceButton\BtnInfo
@@ -658,12 +658,12 @@ Procedure UpdateIceButtonImages(*IceButton.ICEBUTTON_INFO)
     SelectObject_(\hDcHiPressed, \hObjHiPressed) : DeleteDC_(\hDcHiPressed)
     SelectObject_(\hDcDisabled,  \hObjDisabled)  : DeleteDC_(\hDcDisabled)
     
-    ; DesktopScaledX(Y) is done in MakeIceButtonImages()
+    ; DesktopScaledX(Y) is done in MakeIceButton()
     Select *IceButton\PBGadgetType
       Case #PB_GadgetType_Button
-        MakeIceButtonImages(GadgetWidth(*IceButton\PBGadget), GadgetHeight(*IceButton\PBGadget), IceButton())
+        MakeIceButton(GadgetWidth(*IceButton\PBGadget), GadgetHeight(*IceButton\PBGadget), IceButton())
       Case #PB_GadgetType_ButtonImage
-        MakeIceImagesButton(GadgetWidth(*IceButton\PBGadget), GadgetHeight(*IceButton\PBGadget), IceButton())
+        MakeIceButtonImage(GadgetWidth(*IceButton\PBGadget), GadgetHeight(*IceButton\PBGadget), IceButton())
     EndSelect
     
     If Not (IsImage(\imgRegular))   : Debug "imgRegular is missing!"   : CancelOut = #True: EndIf
@@ -750,7 +750,7 @@ Procedure AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #F
       SelectObject_(\hDcPressed,   \hObjPressed)   : DeleteDC_(\hDcPressed)
       SelectObject_(\hDcHiPressed, \hObjHiPressed) : DeleteDC_(\hDcHiPressed)
       SelectObject_(\hDcDisabled,  \hObjDisabled)  : DeleteDC_(\hDcDisabled)
-      ; FreeImage() done in MakeIceButtonImages()
+      ; FreeImage() done in MakeIceButton()
     EndWith
   Else
     With *IceButton
@@ -854,12 +854,12 @@ Procedure AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #F
     ;\hRgn         = CreateRoundRectRgn_(0, 0, DesktopScaledX(GadgetWidth(Gadget)), DesktopScaledY(GadgetHeight(Gadget)), \iRoundX, \iRoundY)
     \hRgn        = CreateRectRgn_(0, 0, DesktopScaledX(GadgetWidth(Gadget)), DesktopScaledY(GadgetHeight(Gadget)))
     
-    ; DesktopScaledX(Y) is done in MakeIceButtonImages()
+    ; DesktopScaledX(Y) is done in MakeIceButton()
     Select *IceButton\PBGadgetType
       Case #PB_GadgetType_Button
-        MakeIceButtonImages(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
+        MakeIceButton(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
       Case #PB_GadgetType_ButtonImage
-        MakeIceImagesButton(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
+        MakeIceButtonImage(GadgetWidth(Gadget), GadgetHeight(Gadget), IceButton())
     EndSelect
     
     If Not (IsImage(\imgRegular))   : Debug "imgRegular is missing!"   : CancelOut = #True: EndIf
@@ -997,7 +997,7 @@ Procedure IceButton_WndProc(hWnd, uMsg, wParam, lParam)
       DeleteObject_(*IceButton\BtnInfo\hRgn)
       ;*IceButton\BtnInfo\hRgn  = CreateRoundRectRgn_(0, 0, DesktopScaledX(GadgetWidth(*IceButton\PBGadget)), DesktopScaledY(GadgetHeight(*IceButton\PBGadget)), *IceButton\BtnInfo\iRoundX, *IceButton\BtnInfo\iRoundY)
       *IceButton\BtnInfo\hRgn = CreateRectRgn_(0, 0, DesktopScaledX(GadgetWidth(*IceButton\PBGadget)), DesktopScaledY(GadgetHeight(*IceButton\PBGadget)))
-      ChangeIceButton(*IceButton\PBGadget)   ; Or with UpdateIceButtonImages(IceButton())
+      ChangeIceButton(*IceButton\PBGadget)   ; Or with UpdateIceButton(IceButton())
       
     Case #WM_SETTEXT
       *IceButton\BtnInfo\sButtonText = PeekS(lParam)
@@ -1466,7 +1466,7 @@ Procedure SetIceButtonAttribute(Gadget, Attribut, Value)
             
         EndSelect
         
-        If Not UpdateIceButtonImages(IceButton())   ; or ChangeIceButton(Gadget)
+        If Not UpdateIceButton(IceButton())   ; or ChangeIceButton(Gadget)
          FreeMemory(IceButton()\BtnInfo)
          DeleteElement(IceButton())
          ProcedureReturn 0
@@ -1745,5 +1745,4 @@ CompilerIf (#PB_Compiler_IsMainFile)
 CompilerEndIf
 
 ; IDE Options = PureBasic 6.03 LTS (Windows - x64)
-; Folding = --------
 ; EnableXP
