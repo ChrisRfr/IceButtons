@@ -1,8 +1,8 @@
 # IceButtons
 **IceButton** Theme Library (for Dark or Light Theme Button), **Windows only**
 
-IceButtons Windows library will add a theme to your ButtonGadget, IceButton<br>
-They'll still work in the same way as PureBasic Button, they're ButtonGadgets
+IceButtons Windows library will add a theme to your ButtonGadget, ButtonImageGadget<br>
+They'll still work in the same way as PureBasic Button, they're ButtonGadget, ButtonImageGadget
 
 ![Alt text](/Demo_IceButtons.png?raw=true "Demo Ice Buttons")<br>
 
