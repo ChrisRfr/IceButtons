@@ -139,7 +139,7 @@ Declare IBDisabledDarkColor(iColor)
 Declare IBDisabledLightColor(iColor)
 
 Declare _ButtonGadget(Gadget, X, Y, Width, Height, Text$, Flags)
-Declare LoadIceButtonTheme(Theme)
+Declare LoadIceBtnTheme(Theme)
 Declare MakeIceButton(cX, cY, *IceButton.ICEBUTTON_INFO)
 Declare MakeIceButtonImage(cX, cY, *IceButton.ICEBUTTON_INFO)
 Declare ChangeIceButton(Gadget)
@@ -396,7 +396,7 @@ Macro SetGadgetAttribute(Gadget, Attribute, Value)
   _SetGadgetAttribute(Gadget, Attribute, Value)
 EndMacro
 
-Procedure LoadIceButtonTheme(Theme)
+Procedure LoadIceBtnTheme(Theme)
   Protected Buffer.i, ColorType.s, I.i, J.i 
   
   Select Theme
@@ -1505,10 +1505,10 @@ Procedure SetIceButtonTheme(Theme)
   
   If Theme = #PB_Default 
     If MapSize(IceBtnTheme()) = 0
-      LoadIceButtonTheme(Theme)
+      LoadIceBtnTheme(Theme)
     EndIf
   Else  
-    LoadIceButtonTheme(Theme)
+    LoadIceBtnTheme(Theme)
   EndIf
   
   ResetList(IceButton())
