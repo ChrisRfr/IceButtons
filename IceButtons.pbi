@@ -428,10 +428,11 @@ EndProcedure
 
 Procedure MakeIceButtonImages(cX, cY, *IceButton.ICEBUTTON_INFO)
   Protected *ThisImage, I
-  Protected ButtonColor = \iButtonColor, ButtonBackColor = \iButtonBackColor, BorderColor = \iBorderColor
-  Protected RoundX = \iRoundX, RoundY = \iRoundY
   
   With *IceButton\BtnInfo
+    Protected ButtonColor = \iButtonColor, ButtonBackColor = \iButtonBackColor, BorderColor = \iBorderColor
+    Protected RoundX = \iRoundX, RoundY = \iRoundY
+    
     ; DPIaware Images size. The image size must be greater than 0 To avoid an error when resizing  
     cX = DesktopScaledX(cX) : cY = DesktopScaledY(cY)
     If cX = 0 : cX = 1 : EndIf
@@ -514,10 +515,11 @@ EndProcedure
 
 Procedure MakeIceImagesButton(cX, cY, *IceButton.ICEBUTTON_INFO)
   Protected *ThisImage, I
-  Protected ButtonColor = \iButtonColor, ButtonBackColor = \iButtonBackColor, BorderColor = \iBorderColor
-  Protected RoundX = \iRoundX, RoundY = \iRoundY
   
   With *IceButton\BtnInfo
+    Protected ButtonColor = \iButtonColor, ButtonBackColor = \iButtonBackColor, BorderColor = \iBorderColor
+    Protected RoundX = \iRoundX, RoundY = \iRoundY
+    
     ; DPIaware Images size. The image size must be greater than 0 To avoid an error when resizing  
     cX = DesktopScaledX(cX) : cY = DesktopScaledY(cY)
     If cX = 0 : cX = 1 : EndIf
