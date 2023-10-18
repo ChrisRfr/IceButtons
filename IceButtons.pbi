@@ -488,8 +488,6 @@ Procedure MakeIceButtonImages(cX, cY, *IceButton.ICEBUTTON_INFO)
         ; Border drawn with button color and an inner 1 px border with background color (full inside or top left or bottom right)
         DrawingMode(#PB_2DDrawing_Outlined)
         RoundBox(0, 0, cX, cY, RoundX, RoundY, BorderColor)
-        
-        ; #BackColor_Border = 0: the border with the 1px background color is drawn inside the border
         Select I
           Case 0, 4     ; imgRegular, imgDisabled
             RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, ButtonBackColor)
@@ -560,45 +558,46 @@ Procedure MakeIceImagesButton(cX, cY, *IceButton.ICEBUTTON_INFO)
           Case 0, 1
             If \iButtonImageID And IsImage(\iButtonImage)
               DrawImage(\iButtonImageID, 0, 0, cX, cY)
-              ;DrawImage(\iButtonImageID, (cX - ImageWidth(\iButtonImage))/2, (cY - ImageHeight(\iButtonImage))/2) ;, ImageWidth(\iButtonImage), ImageHeight(\iButtonImage))
             Else
               Box(0, 0, cX, cY, GetSysColor_(#COLOR_3DFACE))
             EndIf
           Case 2, 3
             If \iButtonPressedImageID And IsImage(\iButtonPressedImage)
               DrawImage(\iButtonPressedImageID, 0, 0, cX, cY)
-              ;DrawImage(\iButtonPressedImageID, (cX - ImageWidth(\iButtonPressedImage))/2, (cY - ImageHeight(\iButtonPressedImage))/2) ;, ImageWidth(\iButtonPressedImage), ImageHeight(\iButtonPressedImage))
             Else
               Box(0, 0, cX, cY, GetSysColor_(#COLOR_3DFACE))  
             EndIf
           Case 4
             If \iButtonImageID And IsImage(\iButtonImage)
               DrawImage(\iButtonImageID, 0, 0, cX, cY)
-              ;DrawImage(\iButtonImageID, (cX - ImageWidth(\iButtonImage))/2, (cY - ImageHeight(\iButtonImage))/2) ;, ImageWidth(\iButtonImage), ImageHeight(\iButtonImage))
-              DrawingMode(#PB_2DDrawing_CustomFilter)
-              CustomFilterCallback(@ScaleGrayCallback())
-              ;Box((cX - ImageWidth(\iButtonImage))/2, (cY - ImageHeight(\iButtonImage))/2, ImageWidth(\iButtonImage), ImageHeight(\iButtonImage))
-              Box(0, 0, cX, cY)
             Else
               Box(0, 0, cX, cY, GetSysColor_(#COLOR_3DFACE))
-              DrawingMode(#PB_2DDrawing_CustomFilter)
-              CustomFilterCallback(@ScaleGrayCallback())
-              Box(0, 0, cX, cY)
             EndIf
+            DrawingMode(#PB_2DDrawing_CustomFilter)
+            CustomFilterCallback(@ScaleGrayCallback())
+            Box(0, 0, cX, cY)
         EndSelect
-
-        ; Border drawn with button color and an inner 1 px border with background color (full inside or top left or bottom right)
-        DrawingMode(#PB_2DDrawing_Outlined)
+        
+        ; Draw a transparent ellipse a little wider than the button and slightly offset upwards, to have a gradient with the background color in the 4 corners and more important at the bottom
+        Select I
+          Case 1, 3     ; imgHilite, imgHiPressed
+            DrawingMode(#PB_2DDrawing_Gradient | #PB_2DDrawing_AlphaBlend)
+            EllipticalGradient(cX / 2, cY * 2 / 5, cX * 3 / 5, cY * 4 / 5)
+            GradientColor(0.0, ButtonColor | $14000000)
+            GradientColor(0.3,  ButtonColor | $14000000)
+            GradientColor(1.0,  ButtonBackColor | $14000000)
+            RoundBox(0, 0, cX, cY, RoundX, RoundY)
+        EndSelect
+        
         ; Fill outside RoundBox border, corner with background color
-        ;RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, ButtonBackColor) : FillArea(0, 0, ButtonBackColor, ButtonBackColor)
+        DrawingMode(#PB_2DDrawing_Outlined)
         RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, $B200FF)
         FillArea(0, 0, $B200FF, ButtonBackColor)
         RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, #Black)
         FillArea(0, 0, #Black, ButtonBackColor)
         
+        ; Border drawn with button color and an inner 1 px border with background color (full inside or top left or bottom right)
         RoundBox(0, 0, cX, cY, RoundX, RoundY, BorderColor)
-        
-        ; #BackColor_Border = 0: the border with the 1px background color is drawn inside the border
         Select I
           Case 0, 4     ; imgRegular, imgDisabled
             RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, ButtonBackColor)
@@ -1746,4 +1745,5 @@ CompilerIf (#PB_Compiler_IsMainFile)
 CompilerEndIf
 
 ; IDE Options = PureBasic 6.03 LTS (Windows - x64)
+; Folding = --------
 ; EnableXP
