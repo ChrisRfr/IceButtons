@@ -1705,29 +1705,19 @@ CompilerIf (#PB_Compiler_IsMainFile)
               EndSelect
               
             Case 1, 5   ; Change Text Button Color in Red or with the Text color from the theme attribute. And Change RoundXY
-              If GetIceButtonAttribute(1, #IceBtn_FrontColor) = #Red
-                SetGadgetFont(1, FontID(0))
-                SetIceButtonAttribute(1, #IceBtn_FrontColor, GetIceBtnThemeAttribute(#IceBtn_FrontColor))
-                SetIceButtonAttribute(1, #IceBtn_RoundX, GetIceBtnThemeAttribute(#IceBtn_RoundX))
-                SetIceButtonAttribute(1, #IceBtn_RoundY, GetIceBtnThemeAttribute(#IceBtn_RoundY))
-                SetGadgetFont(5, FontID(0))
-                SetIceButtonAttribute(5, #IceBtn_FrontColor, GetIceBtnThemeAttribute(#IceBtn_FrontColor))
-                SetIceButtonAttribute(5, #IceBtn_RoundX, GetIceBtnThemeAttribute(#IceBtn_RoundX))
-                SetIceButtonAttribute(5, #IceBtn_RoundY, GetIceBtnThemeAttribute(#IceBtn_RoundY))
-                ;Define Color = GetIceButtonAttribute(1, #IceBtn_FrontColor)
-                ;Debug "IceButton RoundXY = " + Str(GetIceButtonAttribute(1, #IceBtn_RoundX)) + " * " + Str(GetIceButtonAttribute(1, #IceBtn_RoundY)) + " - Text Color RGB(" + Str(Red(Color)) + ", " + Str(Green(Color)) + ", " + Str(Blue(Color)) + ") - Font Normal"
+              If GetIceButtonAttribute(EventGadget(), #IceBtn_FrontColor) = #Red
+                SetGadgetFont(EventGadget(), FontID(0))
+                SetIceButtonAttribute(EventGadget(), #IceBtn_FrontColor, GetIceBtnThemeAttribute(#IceBtn_FrontColor))
+                SetIceButtonAttribute(EventGadget(), #IceBtn_RoundX, GetIceBtnThemeAttribute(#IceBtn_RoundX))
+                SetIceButtonAttribute(EventGadget(), #IceBtn_RoundY, GetIceBtnThemeAttribute(#IceBtn_RoundY))
               Else
-                SetGadgetFont(1, FontID(1))
-                SetIceButtonAttribute(1, #IceBtn_FrontColor, #Red)
-                SetIceButtonAttribute(1, #IceBtn_RoundX, 24)
-                SetIceButtonAttribute(1, #IceBtn_RoundY, 24)
-                SetGadgetFont(5, FontID(1))
-                SetIceButtonAttribute(5, #IceBtn_FrontColor, #Red)
-                SetIceButtonAttribute(5, #IceBtn_RoundX, 24)
-                SetIceButtonAttribute(5, #IceBtn_RoundY, 24)
-                ;Define Color = GetIceButtonAttribute(1, #IceBtn_FrontColor)
-                ;Debug "IceButton RoundXY = " + Str(GetIceButtonAttribute(1, #IceBtn_RoundX)) + " * " + Str(GetIceButtonAttribute(1, #IceBtn_RoundY)) + " - Text Color RGB(" + Str(Red(Color)) + ", " + Str(Green(Color)) + ", " + Str(Blue(Color)) + ") - Font Italic"
+                SetGadgetFont(EventGadget(), FontID(1))
+                SetIceButtonAttribute(EventGadget(), #IceBtn_FrontColor, #Red)
+                SetIceButtonAttribute(EventGadget(), #IceBtn_RoundX, 24)
+                SetIceButtonAttribute(EventGadget(), #IceBtn_RoundY, 24)
               EndIf
+              ;Define Color = GetIceButtonAttribute(EventGadget(), #IceBtn_FrontColor)
+              ;Debug "IceButton RoundXY = " + Str(GetIceButtonAttribute(EventGadget(), #IceBtn_RoundX)) + " * " + Str(GetIceButtonAttribute(EventGadget(), #IceBtn_RoundY)) + " - Text Color RGB(" + Str(Red(Color)) + ", " + Str(Green(Color)) + ", " + Str(Blue(Color)) + ") - Font Italic"
               
             Case 2   ; Toggle Button (ON/OFF)
               If GetGadgetState(2)
