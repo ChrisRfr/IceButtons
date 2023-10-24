@@ -6,8 +6,8 @@
 ;    Source Name: IceButtons.pbi
 ;         Author: ChrisR
 ;  Creation Date: 2023-10-06
-;  Revision Date: 2023-10-18
-;        Version: 1.4
+;  Revision Date: 2023-10-24
+;        Version: 1.5
 ;     PB-Version: 6.0 or other
 ;             OS: Windows Only
 ;         Credit: JellyButtons by Justin Jack (January  1, 2014)
@@ -25,6 +25,7 @@
 ;  |--------------------------------------------------|---------------------------------------------------------------------------------------------
 ;  | #IceBtn_color, Color                             | Button color
 ;  | #IceBtn_BackColor, Color or #PB_Default          | Button background color, #PB_Default to get window color
+;  | #IceBtn_OutsideColor, Color or #PB_Default       | Button outside color, #PB_Default to get window color
 ;  | #IceBtn_DisableColor, Color or #PB_Default       | Disable Button color, #PB_Default to obtain the color by applying a deactivated filter to the button color
 ;  | #IceBtn_FrontColor, Color or #PB_Default         | Button text color, #PB_Default = White or Black depending on whether the button color is dark or light
 ;  | #IceBtn_DisableFrontColor, Color or #PB_Default  | Disable text color, #PB_Default to obtain the color by applying a deactivated filter to the button text color
@@ -72,6 +73,7 @@ EndEnumeration
 Enumeration IceButtonTheme
   #IceBtn_color
   #IceBtn_BackColor
+  #IceBtn_OutsideColor
   #IceBtn_DisableColor
   #IceBtn_FrontColor
   #IceBtn_DisableFrontColor
@@ -89,6 +91,7 @@ Structure IBTN_INFO
   bButtonEnable.b
   iButtonColor.i
   iButtonBackColor.i
+  iButtonOutsideColor.i
   iDisableBackColor.i
   iActiveFont.i
   iFrontColor.i
@@ -132,7 +135,7 @@ Structure ICEBUTTON_INFO
   *OldWndProc
 EndStructure
 
-Declare ToolTipHandle() 
+Declare IBToolTipHandle() 
 Declare IBWindowPB(WindowID)
 Declare IBIsDarkColor(iColor)
 Declare IBDisabledDarkColor(iColor)
@@ -188,15 +191,17 @@ EndMacro
 ;- ----- Color & Filter -----
 ; -----------------------------------------------------------------------------
 
-Structure PB_Globals
-  CurrentWindow.i
-  FirstOptionGadget.i
-  DefaultFont.i
-  *PanelStack
-  PanelStackIndex.l
-  PanelStackSize.l
-  ToolTipWindow.i
-EndStructure
+CompilerIf Not (Defined(PB_Globals, #PB_Structure))
+  Structure PB_Globals
+    CurrentWindow.i
+    FirstOptionGadget.i
+    DefaultFont.i
+    *PanelStack
+    PanelStackIndex.l
+    PanelStackSize.l
+    ToolTipWindow.i
+  EndStructure
+CompilerEndIf
 
 Import ""
   CompilerIf Not (Defined(PB_Object_EnumerateStart, #PB_Procedure))  : PB_Object_EnumerateStart(PB_Gadget_Objects)                 : CompilerEndIf
@@ -205,22 +210,22 @@ Import ""
   CompilerIf Not (Defined(PB_Object_GetThreadMemory, #PB_Procedure)) : PB_Object_GetThreadMemory(*Mem)                             : CompilerEndIf
   CompilerIf Not (Defined(PB_Window_Objects, #PB_Variable))          : PB_Window_Objects.i                                         : CompilerEndIf
   CompilerIf Not (Defined(PB_Gadget_Objects, #PB_Variable))          : PB_Gadget_Objects.i                                         : CompilerEndIf
-  CompilerIf Not (Defined(PB_Image_Objects, #PB_Variable))           : PB_Image_Objects.i                                         : CompilerEndIf
+  CompilerIf Not (Defined(PB_Image_Objects, #PB_Variable))           : PB_Image_Objects.i                                          : CompilerEndIf
   CompilerIf Not (Defined(PB_Gadget_Globals, #PB_Variable))          : PB_Gadget_Globals.i                                         : CompilerEndIf
 EndImport
 
-Procedure ToolTipHandle() 
+Procedure IBToolTipHandle() 
   Protected *PBGadget.PB_Globals 
   *PBGadget = PB_Object_GetThreadMemory(PB_Gadget_Globals) 
   ProcedureReturn *PBGadget\ToolTipWindow 
 EndProcedure
 
-Macro _ToolTipHandle()
-  Tooltip = ToolTipHandle()
+Macro _IBToolTipHandle()
+  Tooltip = IBToolTipHandle()
   If Tooltip
     SetWindowTheme_(Tooltip, @"", @"")
     ;SendMessage_(Tooltip, #TTM_SETDELAYTIME, #TTDT_INITIAL, 250) : SendMessage_(Tooltip, #TTM_SETDELAYTIME,#TTDT_AUTOPOP, 5000) : SendMessage_(Tooltip, #TTM_SETDELAYTIME,#TTDT_RESHOW, 250)
-    Protected TmpBackColor = GetIceBtnThemeAttribute(#IceBtn_BackColor)
+    Protected TmpBackColor = GetIceBtnThemeAttribute(#IceBtn_OutsideColor)
     SendMessage_(Tooltip, #TTM_SETTIPBKCOLOR, TmpBackColor, 0)
     If IBIsDarkColor(TmpBackColor)
       SendMessage_(Tooltip, #TTM_SETTIPTEXTCOLOR, #White, 0)
@@ -228,6 +233,7 @@ Macro _ToolTipHandle()
       SendMessage_(Tooltip, #TTM_SETTIPTEXTCOLOR, #Black, 0)
     EndIf
     SendMessage_(Tooltip, #WM_SETFONT, 0, 0)
+    SendMessage_(Tooltip, #TTM_SETMAXTIPWIDTH, 0, 460)
   EndIf
 EndMacro
 
@@ -430,8 +436,7 @@ Procedure MakeIceButton(cX, cY, *IceButton.ICEBUTTON_INFO)
   Protected *ThisImage, I
   
   With *IceButton\BtnInfo
-    Protected ButtonColor = \iButtonColor, ButtonBackColor = \iButtonBackColor, BorderColor = \iBorderColor
-    Protected RoundX = \iRoundX, RoundY = \iRoundY
+    Protected ButtonColor = \iButtonColor
     
     ; DPIaware Images size. The image size must be greater than 0 To avoid an error when resizing  
     cX = DesktopScaledX(cX) : cY = DesktopScaledY(cY)
@@ -467,8 +472,8 @@ Procedure MakeIceButton(cX, cY, *IceButton.ICEBUTTON_INFO)
       
       If StartDrawing(ImageOutput(*ThisImage))
         
-        Box(0, 0, cX, cY, ButtonBackColor)
-        RoundBox(0, 0, cX, cY, RoundX, RoundY, ButtonColor | $80000000)
+        Box(0, 0, cX, cY, \iButtonOutsideColor)
+        RoundBox(0, 0, cX, cY, \iRoundX, \iRoundY, ButtonColor | $80000000)
         DrawingMode(#PB_2DDrawing_Gradient | #PB_2DDrawing_AlphaBlend)
         
         ; Draw an ellipse a little wider than the button and slightly offset upwards, to have a gradient with the background color in the 4 corners and more important at the bottom
@@ -482,22 +487,22 @@ Procedure MakeIceButton(cX, cY, *IceButton.ICEBUTTON_INFO)
           Case 2      ; imgPressed
             GradientColor(0.45, ButtonColor | $BE000000)
         EndSelect
-        GradientColor(1.0,  ButtonBackColor | $BE000000)
-        RoundBox(0, 0, cX, cY, RoundX, RoundY)
+        GradientColor(1.0,  \iButtonBackColor | $BE000000)
+        RoundBox(0, 0, cX, cY, \iRoundX, \iRoundY)
         
         ; Border drawn with button color and an inner 1 px border with background color (full inside or top left or bottom right)
         DrawingMode(#PB_2DDrawing_Outlined)
-        RoundBox(0, 0, cX, cY, RoundX, RoundY, BorderColor)
+        RoundBox(0, 0, cX, cY, \iRoundX, \iRoundY, \iBorderColor)
         Select I
           Case 0, 4     ; imgRegular, imgDisabled
-            RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, ButtonBackColor)
+            RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, \iButtonBackColor)
           Case 1, 3     ; imgHilite, imgHiPressed
-            RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, BorderColor)
-            RoundBox(2, 2, cX-4, cY-4, RoundX, RoundY, ButtonBackColor)
+            RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, \iBorderColor)
+            RoundBox(2, 2, cX-4, cY-4, \iRoundX, \iRoundY, \iButtonBackColor)
           Case 2        ; imgPressed
-            RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, BorderColor)
-            RoundBox(2, 2, cX-4, cY-4, RoundX, RoundY, BorderColor)
-            RoundBox(3, 3, cX-6, cY-6, RoundX, RoundY, ButtonBackColor)
+            RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, \iBorderColor)
+            RoundBox(2, 2, cX-4, cY-4, \iRoundX, \iRoundY, \iBorderColor)
+            RoundBox(3, 3, cX-6, cY-6, \iRoundX, \iRoundY, \iButtonBackColor)
         EndSelect
         
         StopDrawing()
@@ -517,8 +522,7 @@ Procedure MakeIceButtonImage(cX, cY, *IceButton.ICEBUTTON_INFO)
   Protected *ThisImage, I
   
   With *IceButton\BtnInfo
-    Protected ButtonColor = \iButtonColor, ButtonBackColor = \iButtonBackColor, BorderColor = \iBorderColor
-    Protected RoundX = \iRoundX, RoundY = \iRoundY
+    Protected ButtonColor = \iButtonColor
     
     ; DPIaware Images size. The image size must be greater than 0 To avoid an error when resizing  
     cX = DesktopScaledX(cX) : cY = DesktopScaledY(cY)
@@ -584,30 +588,31 @@ Procedure MakeIceButtonImage(cX, cY, *IceButton.ICEBUTTON_INFO)
             DrawingMode(#PB_2DDrawing_Gradient | #PB_2DDrawing_AlphaBlend)
             EllipticalGradient(cX / 2, cY * 2 / 5, cX * 3 / 5, cY * 4 / 5)
             GradientColor(0.0, ButtonColor | $14000000)
-            GradientColor(0.3,  ButtonColor | $14000000)
-            GradientColor(1.0,  ButtonBackColor | $14000000)
-            RoundBox(0, 0, cX, cY, RoundX, RoundY)
+            GradientColor(0.3, ButtonColor | $14000000)
+            GradientColor(1.0, \iButtonBackColor | $14000000)
+            ;GradientColor(1.0, \iButtonOutsideColor | $14000000) 
+            RoundBox(0, 0, cX, cY, \iRoundX, \iRoundY)
         EndSelect
         
         ; Fill outside RoundBox border, corner with background color
         DrawingMode(#PB_2DDrawing_Outlined)
-        RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, $B200FF)
-        FillArea(0, 0, $B200FF, ButtonBackColor)
-        RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, #Black)
-        FillArea(0, 0, #Black, ButtonBackColor)
+        RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, $B200FF)
+        FillArea(0, 0, $B200FF, \iButtonBackColor)
+        RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, #Black)
+        FillArea(0, 0, #Black, \iButtonOutsideColor)
         
         ; Border drawn with button color and an inner 1 px border with background color (full inside or top left or bottom right)
-        RoundBox(0, 0, cX, cY, RoundX, RoundY, BorderColor)
+        RoundBox(0, 0, cX, cY, \iRoundX, \iRoundY, \iBorderColor)
         Select I
           Case 0, 4     ; imgRegular, imgDisabled
-            RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, ButtonBackColor)
+            RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, \iButtonBackColor)
           Case 1, 3     ; imgHilite, imgHiPressed
-            RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, BorderColor)
-            RoundBox(2, 2, cX-4, cY-4, RoundX, RoundY, ButtonBackColor)
+            RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, \iBorderColor)
+            RoundBox(2, 2, cX-4, cY-4, \iRoundX, \iRoundY, \iButtonBackColor)
           Case 2        ; imgPressed
-            RoundBox(1, 1, cX-2, cY-2, RoundX, RoundY, BorderColor)
-            RoundBox(2, 2, cX-4, cY-4, RoundX, RoundY, BorderColor)
-            RoundBox(3, 3, cX-6, cY-6, RoundX, RoundY, ButtonBackColor)
+            RoundBox(1, 1, cX-2, cY-2, \iRoundX, \iRoundY, \iBorderColor)
+            RoundBox(2, 2, cX-4, cY-4, \iRoundX, \iRoundY, \iBorderColor)
+            RoundBox(3, 3, cX-6, cY-6, \iRoundX, \iRoundY, \iButtonBackColor)
         EndSelect
         
         StopDrawing()
@@ -741,7 +746,7 @@ EndProcedure
 
 Procedure AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #False)
   IBProcedureReturnIf(Not (IsGadget(Gadget))) 
-  Protected hGenDC, CancelOut, RetVal
+  Protected hGenDC, WinParent, CancelOut, RetVal
   
   If UpdateIceButton
     With *IceButton\BtnInfo
@@ -783,7 +788,7 @@ Procedure AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #F
       \bButtonState = GetGadgetState(Gadget)
     EndIf
     
-    _ToolTipHandle()
+    _IBToolTipHandle()
     
     \bButtonEnable = IsWindowEnabled_(*IceButton\IDGadget)
     
@@ -791,7 +796,7 @@ Procedure AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #F
     
     \iButtonBackColor = IceBtnTheme(Str(#IceBtn_BackColor))
     If \iButtonBackColor = #PB_Default
-      Protected WinParent = IBWindowPB(GetAncestor_(*IceButton\IDGadget, #GA_ROOT))
+      WinParent = IBWindowPB(GetAncestor_(*IceButton\IDGadget, #GA_ROOT))
       If IsWindow(WinParent)
         \iButtonBackColor = GetWindowColor(WinParent)
         If \iButtonBackColor = #PB_Default
@@ -799,6 +804,19 @@ Procedure AddIceButton(Gadget, *IceButton.ICEBUTTON_INFO, UpdateIceButton.b = #F
         EndIf
       Else
         \iButtonBackColor = GetSysColor_(#COLOR_WINDOW)
+      EndIf
+    EndIf
+    
+    \iButtonOutsideColor = IceBtnTheme(Str(#IceBtn_OutsideColor))
+    If \iButtonOutsideColor = #PB_Default
+      WinParent = IBWindowPB(GetAncestor_(*IceButton\IDGadget, #GA_ROOT))
+      If IsWindow(WinParent)
+        \iButtonOutsideColor = GetWindowColor(WinParent)
+        If \iButtonOutsideColor = #PB_Default
+          \iButtonOutsideColor = GetSysColor_(#COLOR_WINDOW)
+        EndIf
+      Else
+        \iButtonOutsideColor = GetSysColor_(#COLOR_WINDOW)
       EndIf
     EndIf
     
@@ -1260,7 +1278,7 @@ Procedure GetIceBtnThemeAttribute(Attribut)
   Protected RetVal
   
   Select Attribut
-    Case #IceBtn_color, #IceBtn_BackColor, #IceBtn_DisableColor, #IceBtn_FrontColor, #IceBtn_DisableFrontColor, #IceBtn_EnableShadow, #IceBtn_ShadowColor, #IceBtn_BorderColor, #IceBtn_RoundX, #IceBtn_RoundY
+    Case #IceBtn_color, #IceBtn_BackColor, #IceBtn_OutsideColor, #IceBtn_DisableColor, #IceBtn_FrontColor, #IceBtn_DisableFrontColor, #IceBtn_EnableShadow, #IceBtn_ShadowColor, #IceBtn_BorderColor, #IceBtn_RoundX, #IceBtn_RoundY
       RetVal = IceBtnTheme(Str(Attribut))
   EndSelect
   
@@ -1271,7 +1289,7 @@ Procedure SetIceBtnThemeAttribute(Attribut, Value)
   Protected RetVal
   
   Select Attribut
-    Case #IceBtn_color, #IceBtn_BackColor, #IceBtn_DisableColor, #IceBtn_FrontColor, #IceBtn_DisableFrontColor, #IceBtn_EnableShadow, #IceBtn_ShadowColor, #IceBtn_BorderColor, #IceBtn_RoundX, #IceBtn_RoundY
+    Case #IceBtn_color, #IceBtn_BackColor, #IceBtn_OutsideColor, #IceBtn_DisableColor, #IceBtn_FrontColor, #IceBtn_DisableFrontColor, #IceBtn_EnableShadow, #IceBtn_ShadowColor, #IceBtn_BorderColor, #IceBtn_RoundX, #IceBtn_RoundY
       IceBtnTheme(Str(Attribut)) = Value
       RetVal = #True
   EndSelect
@@ -1292,6 +1310,8 @@ Procedure GetIceButtonAttribute(Gadget, Attribut)
         RetVal = \iButtonColor
       Case #IceBtn_BackColor
         RetVal = \iButtonBackColor
+      Case #IceBtn_OutsideColor
+        RetVal = \iButtonOutsideColor
       Case #IceBtn_DisableColor
         RetVal = \iDisableBackColor
       Case #IceBtn_FrontColor
@@ -1334,6 +1354,18 @@ Procedure SetIceButtonAttribute(Gadget, Attribut, Value)
                 EndIf
               Else
                 \iButtonBackColor = GetSysColor_(#COLOR_WINDOW)
+              EndIf
+            EndIf
+            
+            If IceBtnTheme(Str(#IceBtn_OutsideColor)) = #PB_Default
+              WinParent = IBWindowPB(GetAncestor_(IceButton()\IDGadget, #GA_ROOT))
+              If IsWindow(WinParent)
+                \iButtonOutsideColor = GetWindowColor(WinParent)
+                If \iButtonOutsideColor = #PB_Default
+                  \iButtonOutsideColor = GetSysColor_(#COLOR_WINDOW)
+                EndIf
+              Else
+                \iButtonOutsideColor = GetSysColor_(#COLOR_WINDOW)
               EndIf
             EndIf
             
@@ -1387,6 +1419,21 @@ Procedure SetIceButtonAttribute(Gadget, Attribut, Value)
               EndIf
             Else
               \iButtonBackColor     = Value
+            EndIf
+            
+          Case #IceBtn_OutsideColor
+            If Value = #PB_Default
+              WinParent = IBWindowPB(GetAncestor_(IceButton()\IDGadget, #GA_ROOT))
+              If IsWindow(WinParent)
+                \iButtonOutsideColor = GetWindowColor(WinParent)
+                If \iButtonOutsideColor = #PB_Default
+                  \iButtonOutsideColor = GetSysColor_(#COLOR_WINDOW)
+                EndIf
+              Else
+                \iButtonOutsideColor = GetSysColor_(#COLOR_WINDOW)
+              EndIf
+            Else
+              \iButtonOutsideColor     = Value
             EndIf
             
           Case #IceBtn_DisableColor
@@ -1501,7 +1548,7 @@ Procedure GetIceButtonTheme()
 EndProcedure
 
 Procedure SetIceButtonTheme(Theme)
-  Protected Object, AddIceButton, RetVal
+  Protected Object, AddIceButton, IsJellyButton, RetVal
   
   If Theme = #PB_Default 
     If MapSize(IceBtnTheme()) = 0
@@ -1522,18 +1569,24 @@ Procedure SetIceButtonTheme(Theme)
   While PB_Object_EnumerateNext(PB_Gadget_Objects, @Object)
     Select GadgetType(Object)
       Case #PB_GadgetType_Button, #PB_GadgetType_ButtonImage
-        AddIceButton = #True
-        ResetList(IceButton())
-        While NextElement(IceButton())
-          If IceButton()\PBGadget = Object And IceButton()\IDGadget = GadgetID(Object)
-            AddIceButton(Object, IceButton(), #True)  ; UpdateIceButton = #True
-            AddIceButton = #False
-            Break
+        IsJellyButton = #False
+        CompilerIf Defined(Is_JellyButton, #PB_Procedure)
+          IsJellyButton = Is_JellyButton(Object)
+        CompilerEndIf
+        If IsJellyButton = #False
+          AddIceButton = #True
+          ResetList(IceButton())
+          While NextElement(IceButton())
+            If IceButton()\PBGadget = Object And IceButton()\IDGadget = GadgetID(Object)
+              AddIceButton(Object, IceButton(), #True)  ; UpdateIceButton = #True
+              AddIceButton = #False
+              Break
+            EndIf
+          Wend
+          If AddIceButton
+            AddElement(IceButton())
+            RetVal = AddIceButton(Object, IceButton())
           EndIf
-        Wend
-        If AddIceButton
-          AddElement(IceButton())
-          RetVal = AddIceButton(Object, IceButton())
         EndIf
     EndSelect
   Wend
@@ -1551,6 +1604,7 @@ DataSection
   DarkBlue:
   Data.i #IceBtn_color, $FD6E0D
   Data.i #IceBtn_BackColor, $292521
+  Data.i #IceBtn_OutsideColor, $292521
   Data.i #IceBtn_DisableColor, #PB_Default
   Data.i #IceBtn_FrontColor, #White
   Data.i #IceBtn_DisableFrontColor, #PB_Default
@@ -1562,14 +1616,15 @@ DataSection
   Data.i #IceBtn_END
   
   LightBlue:
-  Data.i #IceBtn_color, $FD6E0D
-  Data.i #IceBtn_BackColor, $FFD7C9
+  Data.i #IceBtn_color, $FFD8CA
+  Data.i #IceBtn_BackColor, $FD6E0D
+  Data.i #IceBtn_OutsideColor, $FFD7C9
   Data.i #IceBtn_DisableColor, #PB_Default
   Data.i #IceBtn_FrontColor, #Black
   Data.i #IceBtn_DisableFrontColor, #PB_Default
   Data.i #IceBtn_EnableShadow, 1
   Data.i #IceBtn_ShadowColor, $FFB47F
-  Data.i #IceBtn_BorderColor, $FEA26B
+  Data.i #IceBtn_BorderColor, $FD6E0D
   Data.i #IceBtn_RoundX, 8
   Data.i #IceBtn_RoundY, 8
   Data.i #IceBtn_END
@@ -1577,6 +1632,7 @@ DataSection
   MyTheme:
   Data.i #IceBtn_color, $FFA6A6
   Data.i #IceBtn_BackColor, $F0F0F0
+  Data.i #IceBtn_OutsideColor, $F0F0F0
   Data.i #IceBtn_DisableColor, $FFB0B0
   Data.i #IceBtn_FrontColor, $000000
   Data.i #IceBtn_DisableFrontColor, $464243
@@ -1664,7 +1720,7 @@ CompilerIf (#PB_Compiler_IsMainFile)
     
     SetGadgetData(0, #IceBtn_Theme_DarkBlue)
     SetIceButtonTheme(#IceBtn_Theme_DarkBlue)
-    SetWindowColor(0, GetIceBtnThemeAttribute(#IceBtn_BackColor))
+    SetWindowColor(0, GetIceBtnThemeAttribute(#IceBtn_OutsideColor))
     
     BindEvent(#PB_Event_SizeWindow, @Resize_Window(), 0)
     PostEvent(#PB_Event_SizeWindow, 0, 0)
@@ -1684,7 +1740,7 @@ CompilerIf (#PB_Compiler_IsMainFile)
                   SetGadgetData(0, #IceBtn_Theme_LightBlue)
                   SetGadgetText(0, "Apply Dark Blue Theme")
                   SetIceButtonTheme(#IceBtn_Theme_LightBlue)
-                  SetWindowColor(0, GetIceBtnThemeAttribute(#IceBtn_BackColor))
+                  SetWindowColor(0, GetIceBtnThemeAttribute(#IceBtn_OutsideColor))
                   ;Debug "IceButton Apply Dark Blue Theme. Theme #IceBtn_Theme_LightBlue = " + Str(GetIceButtonTheme())
                   ; ---------------------------------------------------------------------------------------------------
                   ;   Comment/Uncomment for Testing: SetIceBtnThemeAttribute, FreeIceButtonTheme,...
@@ -1700,7 +1756,7 @@ CompilerIf (#PB_Compiler_IsMainFile)
                   SetGadgetData(0, #IceBtn_Theme_DarkBlue)
                   SetGadgetText(0, "Apply Light Blue tTheme")
                   SetIceButtonTheme(#IceBtn_Theme_DarkBlue)
-                  SetWindowColor(0, GetIceBtnThemeAttribute(#IceBtn_BackColor))
+                  SetWindowColor(0, GetIceBtnThemeAttribute(#IceBtn_OutsideColor))
                   ;Debug "IceButton Apply Light Blue Theme. Theme #IceBtn_Theme_DarkBlue = " + Str(GetIceButtonTheme())
               EndSelect
               
@@ -1735,4 +1791,5 @@ CompilerIf (#PB_Compiler_IsMainFile)
 CompilerEndIf
 
 ; IDE Options = PureBasic 6.03 LTS (Windows - x64)
+; Folding = --------
 ; EnableXP

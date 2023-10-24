@@ -5,7 +5,7 @@
 ;    Source Name: IceButtons_BuildTheme.pb
 ;         Author: ChrisR
 ;           Date: 2023-10-06
-;        Version: 1.2
+;        Version: 1.5
 ;     PB-Version: 6.0 or other
 ;             OS: Windows Only
 ;          Forum: https://www.purebasic.fr/english/viewtopic.php?t=82592
@@ -21,7 +21,8 @@ EndEnumeration
 
 Enumeration Gadgets
   #Canv_ButtonColor        = #IceBtn_color
-  #Canv_BackgroundColor    = #IceBtn_BackColor
+  #Canv_BackColor          = #IceBtn_BackColor
+  #Canv_OutsideColor       = #IceBtn_OutsideColor
   #Canv_DisableColor       = #IceBtn_DisableColor
   #Canv_FrontColor         = #IceBtn_FrontColor
   #Canv_DisableFrontColor  = #IceBtn_DisableFrontColor
@@ -31,7 +32,8 @@ Enumeration Gadgets
   #Spin_RoundX             = #IceBtn_RoundX
   #Spin_RoundY             = #IceBtn_RoundY
   #Txt_ButtonColor
-  #Txt_BackgroundColor
+  #Txt_BackColor
+  #Txt_OutsideColor
   #Txt_Disablecolor
   #Txt_FrontColor
   #Txt_DisableFrontColor
@@ -53,7 +55,7 @@ Declare ClipboardText()
 Declare Resize_Window()
 Declare SetBackColor(Color)
 Declare DrawCanvasColor(Canvas, Color = #PB_Default)
-Declare Open_Window(X = 0, Y = 0, Width = 540, Height = 370)
+Declare Open_Window(X = 0, Y = 0, Width = 540, Height = 400)
 
 Procedure ClipboardText()
   Protected Value, Text$ = "MyTheme:" +#LF$
@@ -66,6 +68,13 @@ Procedure ClipboardText()
     Text$ + "Data.i #IceBtn_BackColor, #PB_Default" +#LF$
   Else
     Text$ + "Data.i #IceBtn_BackColor, $"         + RSet(Hex(Blue(Value)), 2, "0") + RSet(Hex(Green(Value)), 2, "0") + RSet(Hex(Red(Value)), 2, "0") +#LF$
+  EndIf
+  
+  Value = GetIceBtnThemeAttribute(#IceBtn_OutsideColor)
+  If Value = #PB_Default
+    Text$ + "Data.i #IceBtn_OutsideColor, #PB_Default" +#LF$
+  Else
+    Text$ + "Data.i #IceBtn_OutsideColor, $"         + RSet(Hex(Blue(Value)), 2, "0") + RSet(Hex(Green(Value)), 2, "0") + RSet(Hex(Red(Value)), 2, "0") +#LF$
   EndIf
   
   Value = GetIceBtnThemeAttribute(#IceBtn_DisableColor)
@@ -131,23 +140,27 @@ Procedure Resize_Window()
   ResizeGadget(#Canv_ButtonColor, ScaleX * 165, ScaleY * 20, ScaleX * 22, ScaleY * 22)
   DrawCanvasColor(#Canv_ButtonColor, GetIceBtnThemeAttribute(#IceBtn_color))
 
-  ResizeGadget(#Txt_BackgroundColor, ScaleX * 40, ScaleY * 50, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Canv_BackgroundColor, ScaleX * 165, ScaleY * 50, ScaleX * 22, ScaleY * 22)
-  DrawCanvasColor(#Canv_BackgroundColor, GetIceBtnThemeAttribute(#IceBtn_BackColor))
+  ResizeGadget(#Txt_BackColor, ScaleX * 40, ScaleY * 50, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_BackColor, ScaleX * 165, ScaleY * 50, ScaleX * 22, ScaleY * 22)
+  DrawCanvasColor(#Canv_BackColor, GetIceBtnThemeAttribute(#IceBtn_BackColor))
   
-  ResizeGadget(#Txt_Disablecolor, ScaleX * 40, ScaleY * 80, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Canv_DisableColor, ScaleX * 165, ScaleY * 80, ScaleX * 22, ScaleY * 22)
+  ResizeGadget(#Txt_OutsideColor, ScaleX * 40, ScaleY * 80, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_OutsideColor, ScaleX * 165, ScaleY * 80, ScaleX * 22, ScaleY * 22)
+  DrawCanvasColor(#Canv_OutsideColor, GetIceBtnThemeAttribute(#IceBtn_OutsideColor))
+  
+  ResizeGadget(#Txt_Disablecolor, ScaleX * 40, ScaleY * 110, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_DisableColor, ScaleX * 165, ScaleY * 110, ScaleX * 22, ScaleY * 22)
   DrawCanvasColor(#Canv_DisableColor, GetIceBtnThemeAttribute(#IceBtn_DisableColor))
   
-  ResizeGadget(#Txt_FrontColor, ScaleX * 40, ScaleY * 110, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Canv_FrontColor, ScaleX * 165, ScaleY * 110, ScaleX * 22, ScaleY * 22)
+  ResizeGadget(#Txt_FrontColor, ScaleX * 40, ScaleY * 140, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_FrontColor, ScaleX * 165, ScaleY * 140, ScaleX * 22, ScaleY * 22)
   DrawCanvasColor(#Canv_FrontColor, GetIceBtnThemeAttribute(#IceBtn_FrontColor))
   
-  ResizeGadget(#Txt_DisableFrontColor, ScaleX * 40, ScaleY * 140, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Canv_DisableFrontColor, ScaleX * 165, ScaleY * 140, ScaleX * 22, ScaleY * 22)
+  ResizeGadget(#Txt_DisableFrontColor, ScaleX * 40, ScaleY * 170, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_DisableFrontColor, ScaleX * 165, ScaleY * 170, ScaleX * 22, ScaleY * 22)
   DrawCanvasColor(#Canv_DisableFrontColor, GetIceBtnThemeAttribute(#IceBtn_DisableFrontColor))
   
-  ResizeGadget(#Txt_EnableShadow, ScaleX * 40, ScaleY * 170, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Txt_EnableShadow, ScaleX * 40, ScaleY * 200, ScaleX * 120, ScaleY * 22)
 
   ImgWidth = Round(((ScaleX * 22) - 13) / 2, #PB_Round_Down)
   CreateImage(0, ImgWidth + 1, ScaleY * 22)
@@ -155,31 +168,31 @@ Procedure Resize_Window()
     Box(0, 0, OutputWidth(), OutputHeight(), GetSysColor_(#COLOR_3DFACE))
     StopDrawing()
   EndIf
-  ResizeGadget(#Img_EnableShadow, ScaleX * 165, ScaleY * 170, ImgWidth + 1, ScaleY * 22)
+  ResizeGadget(#Img_EnableShadow, ScaleX * 165, ScaleY * 200, ImgWidth + 1, ScaleY * 22)
   SetGadgetState(#Img_EnableShadow, ImageID(0))
-  ResizeGadget(#Check_EnableShadow, (ScaleX * 165) + ImgWidth, ScaleY * 170, (ScaleX * 22) - ImgWidth, ScaleY * 22)
+  ResizeGadget(#Check_EnableShadow, (ScaleX * 165) + ImgWidth, ScaleY * 200, (ScaleX * 22) - ImgWidth, ScaleY * 22)
   
-  ResizeGadget(#Txt_ShadowColor, ScaleX * 40, ScaleY * 200, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Canv_ShadowColor, ScaleX * 165, ScaleY * 200, ScaleX * 22, ScaleY * 22)
+  ResizeGadget(#Txt_ShadowColor, ScaleX * 40, ScaleY * 230, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_ShadowColor, ScaleX * 165, ScaleY * 230, ScaleX * 22, ScaleY * 22)
   DrawCanvasColor(#Canv_ShadowColor, GetIceBtnThemeAttribute(#IceBtn_ShadowColor))
   
-  ResizeGadget(#Txt_BorderColor, ScaleX * 40, ScaleY * 230, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Canv_BorderColor, ScaleX * 165, ScaleY * 230, ScaleX * 22, ScaleY * 22)
+  ResizeGadget(#Txt_BorderColor, ScaleX * 40, ScaleY * 260, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Canv_BorderColor, ScaleX * 165, ScaleY * 260, ScaleX * 22, ScaleY * 22)
   DrawCanvasColor(#Canv_BorderColor, GetIceBtnThemeAttribute(#IceBtn_BorderColor))
   
-  ResizeGadget(#Txt_RounDX, ScaleX * 40, ScaleY * 260, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Spin_RoundX, ScaleX * 165, ScaleY * 259, ScaleX * 50, ScaleY * 24)
+  ResizeGadget(#Txt_RounDX, ScaleX * 40, ScaleY * 290, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Spin_RoundX, ScaleX * 165, ScaleY * 289, ScaleX * 50, ScaleY * 24)
   
-  ResizeGadget(#Txt_RounDY, ScaleX * 40, ScaleY * 290, ScaleX * 120, ScaleY * 22)
-  ResizeGadget(#Spin_RoundY, ScaleX * 165, ScaleY * 289, ScaleX * 50, ScaleY * 24)
+  ResizeGadget(#Txt_RounDY, ScaleX * 40, ScaleY * 320, ScaleX * 120, ScaleY * 22)
+  ResizeGadget(#Spin_RoundY, ScaleX * 165, ScaleY * 319, ScaleX * 50, ScaleY * 24)
   
-  ResizeGadget(#Btn_DarkBlue, ScaleX * 40, ScaleY * 330, ScaleX * 80, ScaleY * 24)
-  ResizeGadget(#Btn_LightBlue, ScaleX * 135, ScaleY * 330, ScaleX * 80, ScaleY * 24)
+  ResizeGadget(#Btn_DarkBlue, ScaleX * 40, ScaleY * 360, ScaleX * 80, ScaleY * 24)
+  ResizeGadget(#Btn_LightBlue, ScaleX * 135, ScaleY * 360, ScaleX * 80, ScaleY * 24)
   
-  ResizeGadget(#Btn_Clipboard, ScaleX * 260, ScaleY * 20, ScaleX * 240, ScaleY * 60)
-  ResizeGadget(#Btn_Regular, ScaleX * 260, ScaleY * 100, ScaleX * 240, ScaleY * 60)
-  ResizeGadget(#Btn_Toggle, ScaleX * 260, ScaleY * 180, ScaleX * 240, ScaleY * 60)
-  ResizeGadget(#Btn_Disabled, ScaleX * 260, ScaleY * 260, ScaleX * 240, ScaleY * 60)
+  ResizeGadget(#Btn_Clipboard, ScaleX * 260, ScaleY * 35, ScaleX * 240, ScaleY * 60)
+  ResizeGadget(#Btn_Regular, ScaleX * 260, ScaleY * 115, ScaleX * 240, ScaleY * 60)
+  ResizeGadget(#Btn_Toggle, ScaleX * 260, ScaleY * 195, ScaleX * 240, ScaleY * 60)
+  ResizeGadget(#Btn_Disabled, ScaleX * 260, ScaleY * 275, ScaleX * 240, ScaleY * 60)
 EndProcedure
 
 Procedure SetBackColor(Color)
@@ -213,62 +226,66 @@ Procedure DrawCanvasColor(Canvas, Color = #PB_Default)
   EndIf
 EndProcedure
       
-Procedure Open_Window(X = 0, Y = 0, Width = 540, Height = 370)
+Procedure Open_Window(X = 0, Y = 0, Width = 540, Height = 400)
   If OpenWindow(#Window, X, Y, Width, Height, "Build Ice Buttons Theme", #PB_Window_SystemMenu | #PB_Window_MinimizeGadget | #PB_Window_MaximizeGadget | #PB_Window_SizeGadget | #PB_Window_ScreenCentered)
     
     TextGadget(#Txt_ButtonColor, 40, 20, 120, 22, "Button Color:")
     CanvasGadget(#Canv_ButtonColor, 165, 20, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_ButtonColor, GetIceBtnThemeAttribute(#IceBtn_color))
   
-    TextGadget(#Txt_BackgroundColor, 40, 50, 120, 22, "Background Color:")
-    CanvasGadget(#Canv_BackgroundColor, 165, 50, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
-    DrawCanvasColor(#Canv_BackgroundColor, GetIceBtnThemeAttribute(#IceBtn_BackColor))
+    TextGadget(#Txt_BackColor, 40, 50, 120, 22, "Background Color:")
+    CanvasGadget(#Canv_BackColor, 165, 50, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    DrawCanvasColor(#Canv_BackColor, GetIceBtnThemeAttribute(#IceBtn_BackColor))
     
-    TextGadget(#Txt_Disablecolor, 40, 80, 120, 22, "Disable Color:")
-    CanvasGadget(#Canv_DisableColor, 165, 80, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    TextGadget(#Txt_OutsideColor, 40, 80, 120, 22, "Outside Color:")
+    CanvasGadget(#Canv_OutsideColor, 165, 80, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    DrawCanvasColor(#Canv_OutsideColor, GetIceBtnThemeAttribute(#IceBtn_OutsideColor))
+    
+    TextGadget(#Txt_Disablecolor, 40, 110, 120, 22, "Disable Color:")
+    CanvasGadget(#Canv_DisableColor, 165, 110, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_DisableColor, GetIceBtnThemeAttribute(#IceBtn_DisableColor))
     
-    TextGadget(#Txt_FrontColor, 40, 110, 120, 22, "Text Color:")
-    CanvasGadget(#Canv_FrontColor, 165, 110, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    TextGadget(#Txt_FrontColor, 40, 140, 120, 22, "Text Color:")
+    CanvasGadget(#Canv_FrontColor, 165, 140, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_FrontColor, GetIceBtnThemeAttribute(#IceBtn_FrontColor))
     
-    TextGadget(#Txt_DisableFrontColor, 40, 140, 120, 22, "Disable Text Color:")
-    CanvasGadget(#Canv_DisableFrontColor, 165, 140, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    TextGadget(#Txt_DisableFrontColor, 40, 170, 120, 22, "Disable Text Color:")
+    CanvasGadget(#Canv_DisableFrontColor, 165, 170, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_DisableFrontColor, GetIceBtnThemeAttribute(#IceBtn_DisableFrontColor))
     
-    TextGadget(#Txt_EnableShadow, 40, 170, 120, 22, "Enable Shadow:")
-    ImageGadget(#Img_EnableShadow, 165, 170, 5, 22, 0)
-    CheckBoxGadget(#Check_EnableShadow, 169, 170, 18, 22, "")
+    TextGadget(#Txt_EnableShadow, 40, 200, 120, 22, "Enable Shadow:")
+    ImageGadget(#Img_EnableShadow, 165, 200, 5, 22, 0)
+    CheckBoxGadget(#Check_EnableShadow, 169, 200, 18, 22, "")
     SetGadgetState(#Check_EnableShadow, GetIceBtnThemeAttribute(#IceBtn_EnableShadow))
     
-    TextGadget(#Txt_ShadowColor, 40, 200, 120, 22, "Shadow Color:")
-    CanvasGadget(#Canv_ShadowColor, 165, 200, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    TextGadget(#Txt_ShadowColor, 40, 230, 120, 22, "Shadow Color:")
+    CanvasGadget(#Canv_ShadowColor, 165, 230, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_ShadowColor, GetIceBtnThemeAttribute(#IceBtn_ShadowColor))
     
-    TextGadget(#Txt_BorderColor, 40, 230, 120, 22, "Border Color:")
-    CanvasGadget(#Canv_BorderColor, 165, 230, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
+    TextGadget(#Txt_BorderColor, 40, 260, 120, 22, "Border Color:")
+    CanvasGadget(#Canv_BorderColor, 165, 260, 22, 22, #PB_Canvas_Border | #PB_Canvas_DrawFocus)
     DrawCanvasColor(#Canv_BorderColor, GetIceBtnThemeAttribute(#IceBtn_BorderColor))
     
-    TextGadget(#Txt_RounDX, 40, 260, 120, 22, "RounDX:")
-    SpinGadget(#Spin_RoundX, 165, 259, 55, 24, 0, 999, #PB_Spin_Numeric)
+    TextGadget(#Txt_RounDX, 40, 290, 120, 22, "RounDX:")
+    SpinGadget(#Spin_RoundX, 165, 289, 55, 24, 0, 999, #PB_Spin_Numeric)
     SetWindowLongPtr_(GadgetID(#Spin_RoundX), #GWL_STYLE, GetWindowLongPtr_(GadgetID(#Spin_RoundX), #GWL_STYLE) | #ES_NUMBER)
     SetGadgetState(#Spin_RoundX, GetIceBtnThemeAttribute(#IceBtn_RoundX))
     
-    TextGadget(#Txt_RounDY, 40, 290, 120, 22, "RounDY:")
-    SpinGadget(#Spin_RoundY, 165, 289, 55, 24, 0, 999, #PB_Spin_Numeric)
+    TextGadget(#Txt_RounDY, 40, 320, 120, 22, "RounDY:")
+    SpinGadget(#Spin_RoundY, 165, 319, 55, 24, 0, 999, #PB_Spin_Numeric)
     SetWindowLongPtr_(GadgetID(#Spin_RoundY), #GWL_STYLE, GetWindowLongPtr_(GadgetID(#Spin_RoundY), #GWL_STYLE) | #ES_NUMBER)
     SetGadgetState(#Spin_RoundY, GetIceBtnThemeAttribute(#IceBtn_RoundY))
     
-    ButtonGadget(#Btn_DarkBlue, 40, 330, 80, 24, "DarkBlue")
+    ButtonGadget(#Btn_DarkBlue, 40, 360, 80, 24, "DarkBlue")
     GadgetToolTip(#Btn_DarkBlue, "Apply DarkBlue Theme")
-    ButtonGadget(#Btn_LightBlue, 135, 330, 80, 24, "LightBlue")
+    ButtonGadget(#Btn_LightBlue, 135, 360, 80, 24, "LightBlue")
     GadgetToolTip(#Btn_LightBlue, "Apply LightBlue Theme")
     
-    ButtonGadget(#Btn_Clipboard, 260, 20, 240, 60, "Copy Theme to Clipboard")
-    ButtonGadget(#Btn_Regular, 260, 100, 240, 60, "MultiLine IceButton Gadget (#PB_Button_MultiLine)", #PB_Button_MultiLine)
-    ButtonGadget(#Btn_Toggle, 260, 180, 240, 60, "Toggle Button (ON)", #PB_Button_Toggle)
+    ButtonGadget(#Btn_Clipboard, 260, 35, 240, 60, "Copy Theme to Clipboard")
+    ButtonGadget(#Btn_Regular, 260, 115, 240, 60, "MultiLine IceButton Gadget (#PB_Button_MultiLine)", #PB_Button_MultiLine)
+    ButtonGadget(#Btn_Toggle, 260, 195, 240, 60, "Toggle Button (ON)", #PB_Button_Toggle)
     SetGadgetState(#Btn_Toggle, #True)
-    ButtonGadget(#Btn_Disabled, 260, 260, 240, 60, "Disabled Button", #PB_Button_Toggle)
+    ButtonGadget(#Btn_Disabled, 260, 275, 240, 60, "Disabled Button", #PB_Button_Toggle)
     DisableGadget(#Btn_Disabled, #True)
     
     BindEvent(#PB_Event_SizeWindow, @Resize_Window(), #Window)
@@ -304,14 +321,14 @@ Repeat
             SetGadgetText(#Btn_Toggle, "Toggle Button (OFF)")
           EndIf
           
-        Case #Canv_ButtonColor, #Canv_BackgroundColor, #Canv_DisableColor, #Canv_FrontColor, #Canv_DisableFrontColor, #Canv_ShadowColor, #Canv_BorderColor
+        Case #Canv_ButtonColor, #Canv_BackColor, #Canv_OutsideColor, #Canv_DisableColor, #Canv_FrontColor, #Canv_DisableFrontColor, #Canv_ShadowColor, #Canv_BorderColor
           If EventType() = #PB_EventType_LeftClick
             ; Attribute = EventGadget() (ex:  #Canv_ButtonColor = #IceBtn_Color)
             Color = ColorRequester(GetIceBtnThemeAttribute(EventGadget()))
             If EventGadget() = #Canv_ButtonColor And Color = #PB_Default
               Color = GetSysColor_(#COLOR_3DFACE)
             EndIf
-            If EventGadget() = #Canv_BackgroundColor
+            If EventGadget() = #Canv_OutsideColor
               SetBackColor(Color)
             EndIf
             SetIceBtnThemeAttribute(EventGadget(), Color)
@@ -338,7 +355,7 @@ Repeat
             Case #Btn_LightBlue
               SetIceButtonTheme(#IceBtn_Theme_LightBlue)  
           EndSelect
-          SetBackColor(GetIceBtnThemeAttribute(#IceBtn_BackColor))
+          SetBackColor(GetIceBtnThemeAttribute(#IceBtn_OutsideColor))
           SetGadgetState(#Check_EnableShadow, GetIceBtnThemeAttribute(#IceBtn_EnableShadow))
           SetGadgetState(#Spin_RoundX, GetIceBtnThemeAttribute(#IceBtn_RoundX))
           SetGadgetState(#Spin_RoundY, GetIceBtnThemeAttribute(#IceBtn_RoundY))
@@ -349,4 +366,7 @@ Repeat
 ForEver
 
 ; IDE Options = PureBasic 6.03 LTS (Windows - x64)
+; CursorPosition = 287
+; FirstLine = 268
+; Folding = -
 ; EnableXP
