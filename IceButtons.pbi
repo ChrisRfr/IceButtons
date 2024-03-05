@@ -271,7 +271,7 @@ Procedure IBIsDarkColor(iColor)
   ProcedureReturn #False
 EndProcedure
 
-Procedure ScaleGrayCallback(x, y, SourceColor, TargetColor)
+Procedure.l ScaleGrayCallback(x, y, SourceColor.l, TargetColor.l)
   Protected light
   light = ((Red(TargetColor) * 30 + Green(TargetColor) * 59 + Blue(TargetColor) * 11) / 100)
   ProcedureReturn RGBA(light, light, light, 255)
@@ -1790,6 +1790,5 @@ CompilerIf (#PB_Compiler_IsMainFile)
   EndIf
 CompilerEndIf
 
-; IDE Options = PureBasic 6.03 LTS (Windows - x64)
-; Folding = --------
+; IDE Options = PureBasic 6.04 LTS (Windows - x64)
 ; EnableXP
